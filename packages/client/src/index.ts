@@ -1261,6 +1261,7 @@ export const createEdgeEverClient = (options: EdgeEverClientOptions = {}) => {
       }),
 
     listTags: () => request<ListTagsResponse>("/api/v1/tags"),
+    createTag: (name: string) => request<{ ok: true }>("/api/v1/tags", { method: "POST", body: JSON.stringify({ name }) }),
 
     renameTag: (tag: string, name: string) =>
       request<{ ok: true; updated: number }>(`/api/v1/tags/${encodeURIComponent(tag)}`, {
@@ -1291,6 +1292,8 @@ export const createEdgeEverClient = (options: EdgeEverClientOptions = {}) => {
       includeDescendants?: boolean;
       q?: string;
       tag?: string;
+      tags?: string[];
+      searchScope?: "body";
       trash?: boolean;
       sort?: MemoSortMode;
       filter?: MemoFilterMode;
@@ -1314,6 +1317,8 @@ export const createEdgeEverClient = (options: EdgeEverClientOptions = {}) => {
       if (params.tag?.trim()) {
         search.set("tag", params.tag.trim());
       }
+      for (const tag of params.tags ?? []) search.append("tags", tag);
+      if (params.searchScope) search.set("searchScope", params.searchScope);
 
       if (params.trash) {
         search.set("trash", "1");
@@ -1339,6 +1344,7 @@ export const createEdgeEverClient = (options: EdgeEverClientOptions = {}) => {
     },
 
     createMemo: (payload: {
+      requestKey?: string;
       notebookId: string;
       title?: string;
       contentJson?: TiptapDoc;
@@ -1579,10 +1585,10 @@ export const createEdgeEverClient = (options: EdgeEverClientOptions = {}) => {
 
     listMemoRevisions: (memoId: string) => request<ListMemoRevisionsResponse>(`/api/v1/memos/${memoId}/revisions`),
 
-    restoreMemoRevision: (memoId: string, revisionId: string) =>
+    restoreMemoRevision: (memoId: string, revisionId: string, expectedRevision?: number) =>
       request<MemoResponse>(`/api/v1/memos/${memoId}/revisions/${revisionId}/restore`, {
         method: "POST",
-        body: JSON.stringify({}),
+        body: JSON.stringify({ expectedRevision }),
       }),
 
     listResources: () => request<ListResourcesResponse>("/api/v1/resources"),
@@ -1744,6 +1750,8 @@ export const createEdgeEverClient = (options: EdgeEverClientOptions = {}) => {
       memoId: string,
       payload: {
         expectedRevision?: number;
+        organized?: boolean;
+        snapshot?: boolean;
         expectedContentHash?: string;
         editSessionId?: string;
         notebookId?: string;

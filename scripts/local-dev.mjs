@@ -97,7 +97,7 @@ export const findLocalD1DatabasePaths = (statePath = LOCAL_DEV_STATE_PATH) => {
   const directory = resolve(statePath, "v3/d1/miniflare-D1DatabaseObject");
   if (!existsSync(directory)) return [];
   return Array.from(new Bun.Glob("*.sqlite").scanSync({ cwd: directory, absolute: true }))
-    .filter((path) => !path.endsWith("/metadata.sqlite"))
+    .filter((path) => !/[\\/]metadata\.sqlite$/.test(path))
     .sort();
 };
 
@@ -223,7 +223,7 @@ const startProfile = async (profile) => {
   assertChildSucceeded(result);
 };
 
-const waitForLocalApi = async (timeoutMs = 30_000) => {
+const waitForLocalApi = async (timeoutMs = 120_000) => {
   const deadline = Date.now() + timeoutMs;
   let lastError;
   while (Date.now() < deadline) {

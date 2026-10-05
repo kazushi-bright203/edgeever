@@ -47,6 +47,8 @@ export type ListMemosInput = {
   includeNotebookDescendants?: boolean;
   query?: string;
   tag?: string;
+  tags?: string[];
+  searchScope?: "body";
   includeTrash?: boolean;
   sort?: string;
   filter?: string;
@@ -201,6 +203,16 @@ export const listMemos = async (
     baseBinds.push(input.workspaceId, tag);
   }
 
+  for (const selected of new Set(input.tags?.map((name) => name.trim()).filter(Boolean))) {
+    baseConditions.push("EXISTS (SELECT 1 FROM memo_tags mt WHERE mt.memo_id = m.id AND mt.workspace_id = ? AND mt.name = ?)");
+    baseBinds.push(input.workspaceId, selected);
+  }
+  if (query && input.searchScope === "body") {
+    const pattern = `%${escapeLike(query)}%`;
+    baseConditions.push("(m.title LIKE ? ESCAPE '\\' OR EXISTS (SELECT 1 FROM memo_contents sc WHERE sc.memo_id = m.id AND sc.content_text LIKE ? ESCAPE '\\'))");
+    baseBinds.push(pattern, pattern);
+  }
+
   if (filter === "tagged") baseConditions.push("m.tags_json <> '[]'");
   else if (filter === "untagged") baseConditions.push("m.tags_json = '[]'");
   else if (filter === "pinned") baseConditions.push("m.is_pinned = 1");
@@ -246,7 +258,7 @@ export const listMemos = async (
     };
   };
 
-  if (query) {
+  if (query && input.searchScope !== "body") {
     const ftsQuery = toFtsQuery(query);
     const likeQuery = `%${escapeLike(query)}%`;
     if (ftsQuery) {

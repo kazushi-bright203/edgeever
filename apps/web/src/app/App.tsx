@@ -26,6 +26,7 @@ const EvernoteImportGuidePane = lazy(() =>
 );
 const LoginScreen = lazy(() => import("@/components/LoginScreen").then((module) => ({ default: module.LoginScreen })));
 const WorkspaceApp = lazy(() => import("@/components/WorkspaceApp").then((module) => ({ default: module.WorkspaceApp })));
+const PersonalMemoApp = lazy(() => import("@/features/personal-memo/PersonalMemoApp").then((module) => ({ default: module.PersonalMemoApp })));
 const PublicSharePage = lazy(() => import("@/components/PublicSharePage").then((module) => ({ default: module.PublicSharePage })));
 const PublicTableFormPage = lazy(() => import("@/components/PublicTableFormPage").then((module) => ({ default: module.PublicTableFormPage })));
 
@@ -57,7 +58,7 @@ const EvernoteMigrationRoute = () => {
   );
 };
 
-const AuthenticatedWorkspace = () => {
+const AuthenticatedWorkspace = ({ personal = false }: { personal?: boolean }) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const desktopBridge = window.edgeeverDesktop;
@@ -206,13 +207,13 @@ const AuthenticatedWorkspace = () => {
 
   return (
     <Suspense fallback={<AuthLoadingScreen />}>
-      <WorkspaceApp
+      {personal ? <PersonalMemoApp accountId={session.user?.id ?? "local-owner"} /> : <WorkspaceApp
         authRequired={session.authRequired}
         demoMode={session.demoMode}
         isLoggingOut={logoutMutation.isPending}
         user={session.user}
         onLogout={() => logoutMutation.mutate()}
-      />
+      />}
     </Suspense>
   );
 };
@@ -232,6 +233,7 @@ export const App = () => {
           <Route path="/form/:token" element={<Suspense fallback={<AuthLoadingScreen />}><PublicTableFormPage /></Suspense>} />
           <Route path={EVERNOTE_MIGRATION_PATH} element={<EvernoteMigrationRoute />} />
           <Route path="/" element={<AuthenticatedWorkspace />} />
+          <Route path="/memo/*" element={<AuthenticatedWorkspace personal />} />
           <Route path="/settings" element={<AuthenticatedWorkspace />} />
           <Route path="/plugins" element={<AuthenticatedWorkspace />} />
           <Route path="/plugins/:pluginId" element={<AuthenticatedWorkspace />} />

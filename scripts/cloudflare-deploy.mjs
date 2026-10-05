@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { runWranglerSync } from "./wrangler-runner.mjs";
+import { isCloudflareAuthenticated } from "./cloudflare-auth-check.mjs";
 
 const PLACEHOLDER_D1_ID = "00000000-0000-0000-0000-000000000000";
 const UUID_PATTERN =
@@ -121,7 +122,7 @@ const printCommandFailure = (result) => {
 
 const ensureCloudflareAuth = () => {
   let whoami = runWrangler(["whoami"]);
-  if (whoami.status === 0) {
+  if (isCloudflareAuthenticated(whoami)) {
     return check("Cloudflare auth", true, "authenticated");
   }
 
@@ -134,7 +135,7 @@ const ensureCloudflareAuth = () => {
   }
 
   whoami = runWrangler(["whoami"]);
-  const authenticated = whoami.status === 0;
+  const authenticated = isCloudflareAuthenticated(whoami);
   check("Cloudflare auth", authenticated, authenticated ? "authenticated" : "login verification failed");
   if (!authenticated) printCommandFailure(whoami);
   return authenticated;
@@ -262,8 +263,9 @@ const doctor = () => {
 
   if (wranglerAvailable) {
     const whoami = runWrangler(["whoami"]);
-    passed = check("Cloudflare auth", whoami.status === 0, whoami.status === 0 ? "authenticated" : "run bun scripts/run-wrangler.mjs login") && passed;
-    if (whoami.status !== 0) printCommandFailure(whoami);
+    const authenticated = isCloudflareAuthenticated(whoami);
+    passed = check("Cloudflare auth", authenticated, authenticated ? "authenticated" : "run bun scripts/run-wrangler.mjs login") && passed;
+    if (!authenticated) printCommandFailure(whoami);
   } else {
     passed = check("Cloudflare auth", false, "Wrangler is unavailable") && passed;
   }

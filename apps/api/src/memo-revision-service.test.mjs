@@ -123,6 +123,7 @@ describe("memo revision service", () => {
       },
     };
     const restoredMemo = { id: "memo_1", revision: 4, title: "Previous" };
+    let detailReads = 0;
 
     const result = await restoreMemoRevision(
       database,
@@ -133,12 +134,16 @@ describe("memo revision service", () => {
       "Owner",
       {
         getMemoDetailRow: async () => current,
-        getMemoDetail: async () => restoredMemo,
+        getMemoDetail: async () => ++detailReads === 1 ? {
+          id: current.id, revision: current.revision, title: current.title,
+          contentHash: current.content_hash, notebookId: "nb_1", tags: ["tag"],
+          isPinned: false, updatedAt: "2026-08-29T00:00:00.000Z",
+        } : restoredMemo,
       },
     );
 
     expect(result).toBe(restoredMemo);
-    expect(batch).toHaveLength(5);
+    expect(batch).toHaveLength(7);
     expect(prepared.some(({ sql }) => sql.includes("INSERT INTO memo_revisions"))).toBe(true);
     expect(prepared.some(({ sql }) => sql.includes("UPDATE memo_contents"))).toBe(true);
   });

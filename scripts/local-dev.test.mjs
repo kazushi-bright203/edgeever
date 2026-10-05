@@ -8,6 +8,7 @@ import {
   buildReadyBanner,
   getLocalDevelopmentProfile,
   inspectLocalD1,
+  findLocalD1DatabasePaths,
   parseEnvironmentFile,
 } from "./local-dev.mjs";
 import {
@@ -16,6 +17,20 @@ import {
 } from "./mobile-dev.mjs";
 
 describe("local development environment", () => {
+  test("excludes Miniflare metadata from local D1 discovery on the current platform", () => {
+    const statePath = mkdtempSync(join(tmpdir(), "edgeever-d1-discovery-"));
+    const directory = join(statePath, "v3/d1/miniflare-D1DatabaseObject");
+    mkdirSync(directory, { recursive: true });
+    for (const name of ["metadata.sqlite", "workspace.sqlite"]) {
+      const database = new Database(join(directory, name), { create: true });
+      database.close();
+    }
+    try {
+      expect(findLocalD1DatabasePaths(statePath)).toEqual([join(directory, "workspace.sqlite")]);
+    } finally {
+      rmSync(statePath, { recursive: true, force: true });
+    }
+  });
   test("targets every online Android device for local API reverse forwarding", () => {
     const devices = parseAdbDevices([
       "List of devices attached",

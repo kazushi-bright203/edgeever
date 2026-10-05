@@ -70,6 +70,7 @@ import {
   restoreMemoRevision as restoreMemoRevisionService,
 } from "./memo-revision-service";
 import { registerTagRoutes } from "./tag-routes";
+import { registerPersonalAiRoutes } from "./personal-ai-routes";
 import { registerTemplateRoutes } from "./template-routes";
 import { registerAuthRoutes } from "./auth-routes";
 import { registerApiTokenRoutes } from "./api-token-routes";
@@ -330,6 +331,7 @@ registerSyncRoutes(app, {
   mapMemoDetail: (...args) => mapMemoDetail(...args),
 });
 registerTagRoutes(app);
+registerPersonalAiRoutes(app);
 registerPluginDistributionRoutes(app);
 registerScheduledTaskRoutes(app);
 registerWorkspaceExtensionRoutes(app, { isDemoMode: (...args) => isDemoMode(...args) });
@@ -354,7 +356,7 @@ registerMemoRoutes(app, {
   mergeMemos: (...args) => mergeMemosRecord(...args),
   moveMemos: (...args) => moveMemosRecord(...args),
   restoreMemo: (...args) => restoreMemoRecord(...args),
-  restoreMemoRevision: (...args) => restoreMemoRevisionService(...args, { getMemoDetail, getMemoDetailRow }),
+  restoreMemoRevision: (db, workspaceId, memoId, revisionId, actor, actorLabel, expectedRevision) => restoreMemoRevisionService(db, workspaceId, memoId, revisionId, actor, actorLabel, { getMemoDetail, getMemoDetailRow }, expectedRevision),
   updateMemo: (...args) => updateMemoRecord(...args),
 });
 

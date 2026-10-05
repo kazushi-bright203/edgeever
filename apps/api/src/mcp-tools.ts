@@ -210,6 +210,7 @@ const MCP_TOOL_DEFINITIONS = [
       required: ["notebookId"],
       additionalProperties: false,
       properties: {
+        requestKey: { type: "string", minLength: 1, maxLength: 128, description: "Reuse one creation key when retrying the same request." },
         notebookId: { type: "string" },
         title: { type: "string" },
         contentMarkdown: { type: "string" },
@@ -476,10 +477,11 @@ const MCP_TOOL_DEFINITIONS = [
     description: "Update memo title, Markdown, tags, notebook, or pinned state.",
     inputSchema: {
       type: "object",
-      required: ["memoId"],
+      required: ["memoId", "expectedRevision"],
       additionalProperties: false,
       properties: {
         memoId: { type: "string" },
+        organized: { type: "boolean", description: "true marks organization complete; false restores the protected 未整理 tag." },
         title: { type: "string" },
         isPinned: { type: "boolean" },
         contentMarkdown: { type: "string" },

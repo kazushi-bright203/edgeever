@@ -20,6 +20,8 @@ import {
   type TiptapDoc,
 } from "@edgeever/shared";
 import { auditStatement } from "./audit";
+import { batchMemoWrite } from "./memo-write-guard";
+import { memoStateGuard, runMemoMutationBatch } from "./memo-state-guard";
 import type { AppContext, AuditActor, AuthContext, Bindings } from "./api-context";
 import { AppError } from "./app-error";
 import { createId, isoNow, parseJsonArray } from "./entity-utils";
@@ -162,6 +164,7 @@ export const searchMemoSummaries = async (
   options: {
     workspaceId: string;
     query?: string | null;
+    searchScope?: "body";
     notebookId?: string | null;
     tags?: string[];
     createdAfter?: string | null;
@@ -227,7 +230,13 @@ export const searchMemoSummaries = async (
     );
   }
 
-  if (q) {
+  if (q && options.searchScope === "body") {
+    filters.push("(m.title LIKE ? ESCAPE '\\' OR c.content_text LIKE ? ESCAPE '\\')");
+    const likeQuery = `%${escapeLike(q)}%`;
+    binds.push(likeQuery, likeQuery);
+  }
+
+  if (q && options.searchScope !== "body") {
     const ftsQuery = toFtsQuery(q);
     const likeQuery = `%${escapeLike(q)}%`;
 
@@ -460,12 +469,12 @@ export const deleteMemosRecord = async (
   const expectedDeletedState = permanent ? 1 : 0;
   const rows = await db
     .prepare(
-      `SELECT id
+      `SELECT id, (SELECT revision FROM memo_contents WHERE memo_id = memos.id) AS revision
        FROM memos
        WHERE workspace_id = ? AND is_deleted = ? AND id IN (${placeholders})`
     )
     .bind(workspaceId, expectedDeletedState, ...uniqueMemoIds)
-    .all<{ id: string }>();
+    .all<{ id: string; revision: number }>();
 
   if (rows.results.length !== uniqueMemoIds.length) {
     throw new AppError(
@@ -477,6 +486,7 @@ export const deleteMemosRecord = async (
 
   const now = isoNow();
   const statements: PreparedStatementAdapter[] = [];
+  const cleanupGuards: PreparedStatementAdapter[] = [];
 
   if (permanent) {
     const resourceRows = await db
@@ -503,6 +513,9 @@ export const deleteMemosRecord = async (
       statements.push(auditStatement(db, actor.actorType, actor.actorId, "memo.delete_permanent", "memo", memoId, {}));
     }
   } else {
+    const guards = rows.results.map((row) => memoStateGuard(db, workspaceId, row.id, row.revision, 0));
+    cleanupGuards.push(...guards.map((guard) => guard.after));
+    statements.push(...guards.map((guard) => guard.before));
     statements.push(
       db.prepare(`DELETE FROM memo_shares WHERE workspace_id = ? AND memo_id IN (${placeholders})`).bind(workspaceId, ...uniqueMemoIds),
       db
@@ -527,7 +540,8 @@ export const deleteMemosRecord = async (
     }
   }
 
-  await db.batch(statements);
+  statements.push(...cleanupGuards);
+  await runMemoMutationBatch(db, statements);
   return uniqueMemoIds.length;
 };
 
@@ -594,13 +608,13 @@ export const restoreMemosRecord = async (
   const placeholders = uniqueMemoIds.map(() => "?").join(", ");
   const rows = await db
     .prepare(
-      `SELECT m.id, m.notebook_id, m.title, m.tags_json, c.content_text
+      `SELECT m.id, m.notebook_id, m.title, m.tags_json, c.content_text, c.revision
        FROM memos m
        INNER JOIN memo_contents c ON c.memo_id = m.id
        WHERE m.workspace_id = ? AND m.is_deleted = 1 AND m.id IN (${placeholders})`
     )
     .bind(workspaceId, ...uniqueMemoIds)
-    .all<{ id: string; notebook_id: string; title: string | null; tags_json: string; content_text: string }>();
+    .all<{ id: string; notebook_id: string; title: string | null; tags_json: string; content_text: string; revision: number }>();
 
   if (rows.results.length !== uniqueMemoIds.length) {
     throw new AppError("missing_memos", "One or more memos cannot be restored.", 400);
@@ -636,7 +650,9 @@ export const restoreMemosRecord = async (
     const restoreNotebookId = activeNotebookIds.has(row.notebook_id) ? row.notebook_id : inbox!.id;
     const tags = parseJsonArray(row.tags_json);
 
+    const guard = memoStateGuard(db, workspaceId, row.id, row.revision, 1, restoreNotebookId);
     statements.push(
+      guard.before,
       db
         .prepare(
           `UPDATE memos
@@ -655,11 +671,12 @@ export const restoreMemosRecord = async (
       auditStatement(db, actor.actorType, actor.actorId, "memo.restore", "memo", row.id, {
         fromNotebookId: row.notebook_id,
         toNotebookId: restoreNotebookId,
-      })
+      }),
+      guard.after
     );
   }
 
-  await db.batch(statements);
+  await runMemoMutationBatch(db, statements);
   return uniqueMemoIds.length;
 };
 
@@ -741,19 +758,21 @@ export const moveMemosToNotebook = async (
   const placeholders = uniqueMemoIds.map(() => "?").join(", ");
   const rows = await db
     .prepare(
-      `SELECT id, notebook_id, tags_json
+      `SELECT id, notebook_id, tags_json, (SELECT revision FROM memo_contents WHERE memo_id = memos.id) AS revision
        FROM memos
        WHERE workspace_id = ? AND is_deleted = 0 AND id IN (${placeholders})`
     )
     .bind(workspaceId, ...uniqueMemoIds)
-    .all<{ id: string; notebook_id: string; tags_json: string }>();
+    .all<{ id: string; notebook_id: string; tags_json: string; revision: number }>();
 
   if (rows.results.length !== uniqueMemoIds.length) {
     throw new AppError("missing_memos", "One or more memos cannot be moved.", 400);
   }
 
   const now = isoNow();
+  const guards = rows.results.map((row) => memoStateGuard(db, workspaceId, row.id, row.revision, 0, notebookId));
   const statements: PreparedStatementAdapter[] = [
+    ...guards.map((guard) => guard.before),
     db
       .prepare(
         `UPDATE memos
@@ -774,7 +793,8 @@ export const moveMemosToNotebook = async (
     );
   }
 
-  await db.batch(statements);
+  statements.push(...guards.map((guard) => guard.after));
+  await runMemoMutationBatch(db, statements);
   return uniqueMemoIds.length;
 };
 
@@ -944,11 +964,11 @@ export const mergeMemosRecord = async (
 export const createMemoRecord = async (
   db: DatabaseAdapter,
   workspaceId: string,
-  input: { notebookId: string; title?: string; contentJson?: unknown; contentMarkdown?: string; tags?: string[]; createdAt?: string; updatedAt?: string },
+  input: { requestKey?: string; notebookId: string; title?: string; contentJson?: unknown; contentMarkdown?: string; tags?: string[]; createdAt?: string; updatedAt?: string },
   actor: { actorType: "user" | "agent"; actorId: string | null },
   actorLabel: string
 ): Promise<MemoDetail> => {
-  const tags = normalizeTags(input.tags);
+  const tags = normalizeTags([...(input.tags ?? []), "未整理"]);
   const contentMarkdown = input.contentMarkdown ?? "";
   const contentJson = input.contentJson && typeof input.contentJson === "object"
     ? input.contentJson as TiptapDoc
@@ -962,7 +982,26 @@ export const createMemoRecord = async (
   const createdAt = input.createdAt ?? now;
   const updatedAt = input.updatedAt ?? now;
 
+  const payloadHash = await sha256(JSON.stringify({ notebookId: input.notebookId, title, contentHash, tags,
+    createdAt: input.createdAt, updatedAt: input.updatedAt }));
+  const replay = async () => {
+    if (!input.requestKey) return null;
+    const receipt = await db.prepare(`SELECT payload_hash, memo_id FROM memo_create_requests
+      WHERE workspace_id = ? AND request_key = ?`).bind(workspaceId, input.requestKey)
+      .first<{ payload_hash: string; memo_id: string }>();
+    if (!receipt) return null;
+    if (receipt.payload_hash !== payloadHash) throw new AppError("request_key_conflict", "This creation key was already used with different content.", 409);
+    const existing = await getMemoDetail(db, workspaceId, receipt.memo_id, true);
+    if (!existing) throw new AppError("creation_gone", "The previously created memo was permanently removed.", 409);
+    return existing;
+  };
+  const existing = await replay();
+  if (existing) return existing;
+  try {
   await db.batch([
+    ...(input.requestKey ? [db.prepare(`INSERT INTO memo_create_requests
+      (workspace_id, request_key, payload_hash, memo_id, created_at) VALUES (?, ?, ?, ?, ?)`)
+      .bind(workspaceId, input.requestKey, payloadHash, id, now)] : []),
     db
       .prepare(
         `INSERT INTO memos (
@@ -982,6 +1021,11 @@ export const createMemoRecord = async (
       notebookId: input.notebookId,
     }),
   ]);
+  } catch (error) {
+    const recovered = await replay();
+    if (recovered) return recovered;
+    throw error;
+  }
 
   const memo = await getMemoDetail(db, workspaceId, id);
 
@@ -1270,6 +1314,8 @@ export const updateMemoRecord = async (
 
   const isPinned = input.isPinned ?? Boolean(current.is_pinned);
   const hasContentUpdate =
+    input.isPinned !== undefined ||
+    input.organized !== undefined ||
     input.notebookId !== undefined ||
     input.title !== undefined ||
     input.contentJson !== undefined ||
@@ -1282,7 +1328,8 @@ export const updateMemoRecord = async (
 
   if (!hasContentUpdate) {
     if (input.isPinned === undefined || isPinned === Boolean(current.is_pinned)) {
-      if (commit) await db.batch([...commit.before, ...commit.after(id)]);
+      const saved = await batchMemoWrite(db, workspaceId, current, current.notebook_id, [...(commit?.before ?? []), ...(commit?.after(id) ?? [])]);
+      if (!saved) return { error: "memo_revision_conflict", message: "The memo changed before the update completed.", status: 409 };
       const memo = await getMemoDetail(db, workspaceId, id);
 
       if (!memo) {
@@ -1339,7 +1386,11 @@ export const updateMemoRecord = async (
       message: "Save blocked because the title changed while most of the note content disappeared.",
     };
   }
-  const tags = input.tags === undefined ? parseJsonArray(current.tags_json) : normalizeTags(input.tags);
+  let tags = input.tags === undefined ? parseJsonArray(current.tags_json) : normalizeTags(input.tags);
+  if (input.organized === true) tags = tags.filter((tag) => tag !== "未整理");
+  else if (input.organized === false || parseJsonArray(current.tags_json).includes("未整理")) {
+    tags = normalizeTags([...tags, "未整理"]);
+  }
   const excerpt = createExcerpt(contentText);
   const notebookId = input.notebookId ?? current.notebook_id;
   const currentTable = parseTableDocument(current.content_markdown);
@@ -1380,12 +1431,13 @@ export const updateMemoRecord = async (
     && input.updatedAt === undefined;
 
   if (unchanged) {
-    if (commit) await db.batch([...commit.before, ...commit.after(id)]);
+    const saved = await batchMemoWrite(db, workspaceId, current, notebookId, [...(commit?.before ?? []), ...(commit?.after(id) ?? [])]);
+    if (!saved) return { error: "revision_conflict", message: "Memo was updated elsewhere. Reload before saving.", status: 409 };
     return { memo: mapMemoDetail(current) };
   }
 
   const nextRevision = current.revision + 1;
-  const revisionStatements = (await shouldSnapshotMemoRevisionService(db, current, title, JSON.stringify(tags), contentHash, updatedAt))
+  const revisionStatements = (input.snapshot || await shouldSnapshotMemoRevisionService(db, current, title, JSON.stringify(tags), contentHash, updatedAt))
     ? [createMemoRevisionStatementService(db, current, actorLabel, updatedAt)]
     : [];
   const editSessionStatements = editSession
@@ -1417,7 +1469,7 @@ export const updateMemoRecord = async (
         ]
       : [];
 
-  await db.batch([
+  const saved = await batchMemoWrite(db, workspaceId, current, notebookId, [
     ...(commit?.before ?? []),
     ...revisionStatements,
     ...releaseResourceStatements,
@@ -1446,6 +1498,14 @@ export const updateMemoRecord = async (
     }),
     ...(commit?.after(id) ?? []),
   ]);
+
+  if (!saved) {
+    return {
+      error: "revision_conflict",
+      message: "Memo was updated elsewhere. Reload before saving.",
+      status: 409,
+    };
+  }
 
   const memo = await getMemoDetail(db, workspaceId, id);
 

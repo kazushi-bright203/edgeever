@@ -20,6 +20,10 @@ export const REQUIRED_TABLES = [
   "ai_provider_configs",
   "ai_models",
   "ai_workspace_settings",
+  "memo_write_guards",
+  "memo_create_requests",
+  "tag_registry",
+  "personal_ai_previews",
 ];
 
 export const buildSchemaVerificationSql = () =>

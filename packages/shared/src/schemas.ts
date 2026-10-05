@@ -30,6 +30,7 @@ export const NotebookUpdateSchema = z.object({
 });
 
 export const MemoCreateSchema = z.object({
+  requestKey: z.string().trim().min(1).max(128).optional(),
   notebookId: z.string().trim().min(1),
   title: z.string().trim().max(160).optional(),
   contentJson: z.unknown().optional(),
@@ -40,6 +41,8 @@ export const MemoCreateSchema = z.object({
 });
 
 export const MemoUpdateSchema = z.object({
+  organized: z.boolean().optional(),
+  snapshot: z.boolean().optional(),
   expectedRevision: z.number().int().min(0).optional(),
   expectedContentHash: z.string().length(64).optional(),
   editSessionId: z.string().trim().min(1).optional(),

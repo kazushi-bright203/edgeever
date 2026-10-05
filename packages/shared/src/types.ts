@@ -260,6 +260,8 @@ export type CreatedApiToken = {
 };
 
 export type TagSummary = {
+  id?: string;
+  isSystem?: boolean;
   name: string;
   memoCount: number;
   updatedAt: string | null;

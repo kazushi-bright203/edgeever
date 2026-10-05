@@ -110,7 +110,7 @@ export type McpToolDependencies = {
   createMemoRecord: (
     database: DatabaseAdapter,
     workspaceId: string,
-    input: { notebookId: string; title?: string; contentJson?: unknown; contentMarkdown?: string; tags?: string[]; createdAt?: string; updatedAt?: string },
+    input: { requestKey?: string; notebookId: string; title?: string; contentJson?: unknown; contentMarkdown?: string; tags?: string[]; createdAt?: string; updatedAt?: string },
     actor: AuditActor,
     actorLabel: string,
   ) => Promise<MemoDetail>;
@@ -188,6 +188,7 @@ export type McpToolDependencies = {
     options: {
       workspaceId: string;
       query?: string | null;
+      searchScope?: "body";
       notebookId?: string | null;
       tags?: string[];
       createdAfter?: string | null;
@@ -271,6 +272,7 @@ export const callMcpTool = async (
         memos: await searchMemoSummaries(c.env.storage.db, {
           workspaceId: auth.workspaceId,
           query: getOptionalString(args.query),
+          searchScope: "body",
           notebookId: getOptionalString(args.notebookId),
           tags: getOptionalStringArray(args.tags),
           createdAfter: getOptionalString(args.createdAfter),
@@ -450,6 +452,7 @@ export const callMcpTool = async (
       const memo = await createMemoRecord(c.env.storage.db, auth.workspaceId, {
         notebookId,
         title: getOptionalString(args.title) ?? undefined,
+        requestKey: getOptionalString(args.requestKey) ?? undefined,
         contentMarkdown: getOptionalString(args.contentMarkdown) ?? "",
         tags: getOptionalStringArray(args.tags),
         createdAt: getOptionalString(args.createdAt) ?? undefined,
@@ -562,6 +565,9 @@ export const callMcpTool = async (
     }
     case "update_memo": {
       assertScope(auth, "write:memos");
+      if (typeof args.expectedRevision !== "number" || !Number.isInteger(args.expectedRevision) || args.expectedRevision < 0) {
+        throw new AppError("revision_required", "get_memoで取得したexpectedRevisionを指定してください。", 428);
+      }
       const memoId = getRequiredString(args.memoId, "memoId");
       if (args.contentMarkdown !== undefined) {
         const existing = await getMemoDetail(c.env.storage.db, auth.workspaceId, memoId);
@@ -598,6 +604,8 @@ export const callMcpTool = async (
             typeof args.expectedRevision === "number" && Number.isInteger(args.expectedRevision)
               ? args.expectedRevision
               : undefined,
+          organized: typeof args.organized === "boolean" ? args.organized : undefined,
+          snapshot: true,
           notebookId: getOptionalString(args.notebookId) ?? undefined,
           title: getOptionalString(args.title) ?? undefined,
           isPinned: typeof args.isPinned === "boolean" ? args.isPinned : undefined,

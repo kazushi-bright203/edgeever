@@ -15,6 +15,7 @@ import { createId, isoNow, parseJsonArray } from "./entity-utils";
 import { sha256 } from "./hash-utils";
 import { upsertMemoSearchDocumentStatement } from "./memo-search-index";
 import type { DatabaseAdapter, PreparedStatementAdapter } from "./storage-contract";
+import { batchMemoWrite } from "./memo-write-guard";
 
 const REVISION_SNAPSHOT_INTERVAL_MS = 5 * 60 * 1000;
 
@@ -188,9 +189,15 @@ export const restoreMemoRevision = async (
   actor: AuditActor,
   actorLabel: string,
   dependencies: Pick<MemoRevisionDependencies, "getMemoDetail" | "getMemoDetailRow">,
+  expectedRevision?: number,
 ) => {
   const current = await dependencies.getMemoDetailRow(db, workspaceId, memoId);
   if (!current) throw new AppError("not_found", "Memo not found", 404);
+  const detail = await dependencies.getMemoDetail(db, workspaceId, memoId);
+  if (!detail) throw new AppError("not_found", "Memo not found", 404);
+  if (detail.revision !== current.revision || (expectedRevision !== undefined && detail.revision !== expectedRevision)) {
+    throw new AppError("revision_conflict", "メモが更新されました。履歴の復元を停止しました。", 409);
+  }
 
   const revision = await getMemoRevisionRow(db, workspaceId, memoId, revisionId);
   if (!revision) throw new AppError("not_found", "Memo revision not found", 404);
@@ -204,7 +211,11 @@ export const restoreMemoRevision = async (
   const nextRevision = current.revision + 1;
   const now = isoNow();
 
-  await db.batch([
+  const saved = await batchMemoWrite(db, workspaceId, {
+    id: detail.id, revision: detail.revision, content_hash: detail.contentHash,
+    notebook_id: detail.notebookId, title: detail.title, tags_json: JSON.stringify(detail.tags),
+    is_pinned: detail.isPinned ? 1 : 0, updated_at: detail.updatedAt,
+  }, detail.notebookId, [
     createMemoRevisionStatement(db, current, actorLabel, now),
     db.prepare(
       `UPDATE memos
@@ -224,6 +235,7 @@ export const restoreMemoRevision = async (
       revision: nextRevision,
     }),
   ]);
+  if (!saved) throw new AppError("revision_conflict", "メモが更新されました。履歴の復元を停止しました。", 409);
 
   const memo = await dependencies.getMemoDetail(db, workspaceId, memoId);
   if (!memo) throw new AppError("not_found", "Memo not found after revision restore", 404);

@@ -35,6 +35,7 @@ type MemoRouteDependencies = {
     database: DatabaseAdapter,
     workspaceId: string,
     input: {
+      requestKey?: string;
       notebookId: string;
       title?: string;
       contentMarkdown?: string;
@@ -102,6 +103,7 @@ type MemoRouteDependencies = {
     revisionId: string,
     actor: AuditActor,
     actorLabel: string,
+    expectedRevision?: number,
   ) => Promise<MemoDetail>;
   updateMemo: (
     database: DatabaseAdapter,
@@ -138,6 +140,8 @@ export const registerMemoRoutes = (
       includeNotebookDescendants: context.req.query("includeDescendants") === "1",
       query: context.req.query("q"),
       tag: context.req.query("tag"),
+      tags: context.req.queries("tags"),
+      searchScope: context.req.query("searchScope") === "body" ? "body" : undefined,
       includeTrash: context.req.query("trash") === "1",
       sort: context.req.query("sort"),
       filter: context.req.query("filter"),
@@ -317,6 +321,8 @@ export const registerMemoRoutes = (
     if (denied) return denied;
 
     try {
+      const input = await context.req.json<{ expectedRevision?: number }>();
+      if (input.expectedRevision !== undefined && (!Number.isInteger(input.expectedRevision) || input.expectedRevision < 0)) return badRequest(context, "Invalid expectedRevision");
       const memo = await dependencies.restoreMemoRevision(
         context.env.storage.db,
         getWorkspaceId(context),
@@ -324,6 +330,7 @@ export const registerMemoRoutes = (
         context.req.param("revisionId"),
         getAuditActor(context),
         getActorLabel(context),
+        ...(input.expectedRevision === undefined ? [] : [input.expectedRevision]),
       );
       return context.json({ memo });
     } catch (error) {

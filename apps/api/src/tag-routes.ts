@@ -10,6 +10,7 @@ import {
 } from "./request-auth";
 import {
   listTagSummaries,
+  createTag,
   updateTagAcrossMemos,
 } from "./tag-service";
 
@@ -22,6 +23,11 @@ const decodeTagParam = (value: string) => {
 };
 
 export const registerTagRoutes = (app: Hono<AppEnv>) => {
+  app.post("/api/v1/tags", zValidator("json", TagRenameSchema), async (c) => {
+    const denied = requireScopes(c, "write:tags");
+    if (denied) return denied;
+    return c.json(await createTag(c.env.storage.db, getWorkspaceId(c), c.req.valid("json").name), 201);
+  });
   app.get("/api/v1/tags", async (c) => {
     const denied = requireScopes(c, "read:tags");
     if (denied) return denied;
