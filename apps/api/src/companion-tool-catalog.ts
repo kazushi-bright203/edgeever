@@ -40,6 +40,15 @@ export function assertOpenAiCompatibleToolSchema(schema: unknown, toolName: stri
 export const COMPANION_MCP_TOOLS = MCP_TOOLS.filter(tool => allowed.has(tool.name));
 for (const tool of COMPANION_MCP_TOOLS) assertOpenAiCompatibleToolSchema(tool.inputSchema, tool.name);
 const validators = new Map<string, z.ZodType>();
+// The companion already records revisions from complete reads. Forward that
+// snapshot before validating the shared MCP contract; never read a fresh base
+// here or replace an explicitly supplied revision.
+export function withInspectedMemoRevision(name: string, args: Record<string, unknown>, inspected: ReadonlyMap<string, number>) {
+  if (name !== "update_memo" || args.expectedRevision !== undefined || typeof args.memoId !== "string") return args;
+  const revision = inspected.get(args.memoId);
+  if (revision === undefined) throw new AppError("companion_action_unread", "Read the complete source notes before changing their content.", 400);
+  return { ...args, expectedRevision: revision };
+}
 export function validateCompanionTool(name: string, args: Record<string, unknown>) {
   const definition = COMPANION_MCP_TOOLS.find(tool => tool.name === name);
   if (!definition) throw new AppError("companion_tool_unavailable", "This tool is not available to the companion.", 400);

@@ -212,7 +212,7 @@ describe("AI route contracts", () => {
     expect(receivedInput).toMatchObject({
       title: "Unsaved title",
       currentTags: ["Current"],
-      existingTags: ["Current", "React"],
+      existingTags: ["Current", "React", "未整理"],
     });
     expect(await response.json()).toEqual({
       suggestions: [

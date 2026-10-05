@@ -3,7 +3,7 @@ import type { DatabaseAdapter } from "./storage-contract";
 import type { AppContext } from "./api-context";
 import type { CompanionScope } from "./companion-service";
 import type { CompanionRunState } from "./companion-prepare";
-import { COMPANION_MCP_TOOLS, validateCompanionTool } from "./companion-tool-catalog";
+import { COMPANION_MCP_TOOLS, validateCompanionTool, withInspectedMemoRevision } from "./companion-tool-catalog";
 import { companionWorkspaceCursor, proposeCompanionToolAction } from "./companion-tool-actions";
 import { describeCompanionTool } from "./companion-tool-receipts";
 import { executeWorkspaceTool } from "./mcp-tool-executor";
@@ -305,7 +305,7 @@ export function createCompanionTools(args: { db: DatabaseAdapter; scope: Compani
             parameters.notebookId = await resolveWorkspaceInboxId(args.db, args.scope.workspaceId);
           }
         }
-        const { args: parameters_ } = validateCompanionTool(definition.name, parameters);
+        const { args: parameters_ } = validateCompanionTool(definition.name, withInspectedMemoRevision(definition.name, parameters, inspected));
         const requestedDiagramKind = explicitDiagramKind(args.input.message);
         if (definition.name === "create_diagram_memo" && requestsInfographic(args.input.message) && !requestedDiagramKind) {
           throw new AppError("invalid_params",
@@ -354,7 +354,6 @@ export function createCompanionTools(args: { db: DatabaseAdapter; scope: Compani
           if (memo.contentMarkdown.length > COMPANION_NOTE_EDIT_MAX_CHARS || parameters_.contentMarkdown.length > COMPANION_NOTE_EDIT_MAX_CHARS) {
             throw new AppError("invalid_params", "This note edit is too large. Split it into a smaller change.", 400);
           }
-          parameters_.expectedRevision = memo.revision;
         }
         if (autoApply && parameters_.dryRun !== true && (definition.name === "update_memo" || definition.name === "update_diagram" || definition.name === "restore_memo_revision")) {
           const memo = await getMemoDetail(args.db, args.scope.workspaceId, String(parameters_.memoId));

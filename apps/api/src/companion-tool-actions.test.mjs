@@ -93,9 +93,9 @@ describe("shared companion MCP adapter", () => {
     const note = await getMemoDetail(f.db, scope.workspaceId, f.notes[0].id, true);
     if (name === "update_memo") expect(note).toMatchObject({ title: "Changed", contentMarkdown: "Exact replacement" });
     if (name === "move_memos") expect(note.notebookId).toBe("target");
-    if (name === "add_tags_to_memos") expect(note.tags).toEqual(["old", "new"]);
-    if (name === "remove_tags_from_memos" || name === "delete_tag") expect(note.tags).toEqual([]);
-    if (name === "rename_tag") expect(note.tags).toEqual(["renamed"]);
+    if (name === "add_tags_to_memos") expect(note.tags).toEqual(["old", "未整理", "new"]);
+    if (name === "remove_tags_from_memos" || name === "delete_tag") expect(note.tags).toEqual(["未整理"]);
+    if (name === "rename_tag") expect(note.tags).toEqual(["renamed", "未整理"]);
     if (name === "trash_memos" || name === "merge_memos") expect(note.isDeleted).toBe(true);
     if (name === "restore_memos") expect(note.isDeleted).toBe(false);
     if (name === "create_memo" || name === "merge_memos") expect(body.action.resultMemoId).toBeTruthy();
@@ -177,11 +177,22 @@ describe("shared companion MCP adapter", () => {
     expect((await getMemoDetail(f.db, scope.workspaceId, f.notes[0].id)).contentMarkdown).toBe("Newer edit");
     expect(f.sqlite.query("SELECT COUNT(*) AS n FROM companion_actions").get().n).toBe(0);
   });
+  test("an explicit stale revision is not replaced with the companion's newer read", async () => {
+    const f = await setup();
+    const tools = createCompanionTools({ ...f, scope, signal: new AbortController().signal, assertActive: async () => {}, sources: [] });
+    await tools.get_memo.execute({ memoId: f.notes[0].id });
+    expect(await tools.update_memo.execute({ memoId: f.notes[0].id, title: "Metadata update" })).toMatchObject({ applied: true });
+    const current = await getMemoDetail(f.db, scope.workspaceId, f.notes[0].id);
+    expect(current.revision).toBeGreaterThan(f.notes[0].revision);
+    await expect(tools.update_memo.execute({ memoId: current.id, expectedRevision: f.notes[0].revision, contentMarkdown: "Must not overwrite" }))
+      .rejects.toThrow("Memo was updated elsewhere. Reload before saving.");
+    expect(await getMemoDetail(f.db, scope.workspaceId, current.id)).toMatchObject({ revision: current.revision, contentMarkdown: "One original content", title: "Metadata update" });
+  });
   test("move, tag, and notebook writes execute immediately without a confirmation card", async () => {
     const f = await setup();
     const tools = createCompanionTools({ ...f, scope, signal: new AbortController().signal, assertActive: async () => {}, sources: [] });
     expect(await tools.add_tags_to_memos.execute({ memoIds: [f.notes[1].id], tags: ["new"] })).toMatchObject({ applied: true });
-    expect((await getMemoDetail(f.db, scope.workspaceId, f.notes[1].id)).tags).toEqual(["old", "new"]);
+    expect((await getMemoDetail(f.db, scope.workspaceId, f.notes[1].id)).tags).toEqual(["old", "未整理", "new"]);
     expect(await tools.move_memos.execute({ memoIds: [f.notes[1].id], notebookId: "target" })).toMatchObject({ applied: true });
     expect((await getMemoDetail(f.db, scope.workspaceId, f.notes[1].id)).notebookId).toBe("target");
     expect(await tools.create_notebook.execute({ name: "Inbox Two" })).toMatchObject({ applied: true });

@@ -5,7 +5,7 @@ import type { CompanionScope } from "./companion-service";
 import type { DatabaseAdapter, DatabaseQueryResult, PreparedStatementAdapter } from "./storage-contract";
 import { getMemoDetail } from "./memo-service";
 import { getCompanionAction } from "./companion-actions";
-import { validateCompanionTool } from "./companion-tool-catalog";
+import { validateCompanionTool, withInspectedMemoRevision } from "./companion-tool-catalog";
 import { executeWorkspaceTool } from "./mcp-tool-executor";
 import { getNotebook } from "./notebook-service";
 import { previewTagRename } from "./tag-service";
@@ -18,7 +18,7 @@ const stale = () => new AppError("companion_action_conflict", "Notes changed or 
 export async function proposeCompanionToolAction(db: DatabaseAdapter, scope: CompanionScope, turnId: string,
   toolName: string, input: Record<string, unknown>, reason: string, cursor: number, inspected: ReadonlyMap<string, number>, evidenceIds: string[] = [],
   previewExtras?: { baseContentMarkdown?: string }) {
-  const { definition, args } = validateCompanionTool(toolName, input);
+  const { definition, args } = validateCompanionTool(toolName, withInspectedMemoRevision(toolName, input, inspected));
   if (definition.annotations.readOnlyHint || args.dryRun === true) throw new AppError("invalid_params", "This call does not need approval.", 400);
   const plan = CompanionToolPlanSchema.parse({ kind: "tool", toolName, arguments: args, reason });
   const ids = typeof args.memoId === "string" ? [args.memoId] : Array.isArray(args.memoIds) ? args.memoIds as string[] : [];
@@ -44,7 +44,7 @@ export async function proposeCompanionToolAction(db: DatabaseAdapter, scope: Com
   }
   const tagPreview = toolName === "rename_tag" || toolName === "delete_tag"
     ? await previewTagRename(db, scope.workspaceId, String(args.from ?? args.tag), toolName === "rename_tag" ? String(args.to) : null) : null;
-  if (toolName === "update_memo") plan.arguments.expectedRevision = notes[0].revision;
+  if (toolName === "update_memo" && plan.arguments.expectedRevision !== notes[0].revision) throw stale();
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   const preview = {

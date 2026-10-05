@@ -72,6 +72,15 @@ const createFixture = (scopes = ["read:memos", "write:memos"]) => {
 };
 
 describe("MCP template and AI instruction management", () => {
+  test("direct MCP memo updates require the revision read by the caller", async () => {
+    const { sqlite, auth, context } = createFixture();
+    sqlite.query("INSERT INTO notebooks (id, workspace_id, name) VALUES (?, ?, ?)").run("nb_revision", "ws_mcp", "Revision");
+    const created = await callMcpTool(context, auth, "create_memo", { notebookId: "nb_revision", contentMarkdown: "Original" });
+    await expect(callMcpTool(context, auth, "update_memo", { memoId: created.memo.id, contentMarkdown: "Must not overwrite" }))
+      .rejects.toMatchObject({ code: "revision_required", status: 428 });
+    const reread = await callMcpTool(context, auth, "get_memo", { memoId: created.memo.id });
+    expect(reread.memo).toMatchObject({ contentMarkdown: "Original", revision: created.memo.revision });
+  });
   test.each([
     ["mind-map", [
       { id: "root", label: "Root" },
@@ -100,7 +109,7 @@ describe("MCP template and AI instruction management", () => {
       edges,
     });
 
-    expect(created).toMatchObject({ diagramKind: kind, memo: { title: "Generated diagram", tags: ["design"] } });
+    expect(created).toMatchObject({ diagramKind: kind, memo: { title: "Generated diagram", tags: ["design", "未整理"] } });
     expect(JSON.stringify(created.memo)).not.toContain("edgeever-diagram-v1");
     expect(created.diagram.nodes[0].layout).toBeUndefined();
     const stored = sqlite.query("SELECT content_markdown FROM memo_contents WHERE memo_id = ?").get(created.memo.id);
@@ -151,7 +160,7 @@ describe("MCP template and AI instruction management", () => {
     expect(read.infographic).toEqual({ template: "chart-pie-donut-plain-text" });
     expect(read.memo.contentMarkdown).not.toContain("edgeever-infographic-v1");
     await expect(callMcpTool(context, auth, "update_memo", {
-      memoId: created.memo.id, contentMarkdown: "# replaced",
+      memoId: created.memo.id, expectedRevision: created.memo.revision, contentMarkdown: "# replaced",
     })).rejects.toMatchObject({ code: "infographic_update_required" });
     await expect(callMcpTool(context, auth, "create_infographic_memo", {
       notebookId: "nb_graphics",
@@ -232,6 +241,7 @@ describe("MCP template and AI instruction management", () => {
     })).rejects.toMatchObject({ code: "revision_conflict", status: 409 });
     await expect(callMcpTool(context, auth, "update_memo", {
       memoId: created.memo.id,
+      expectedRevision: updated.memo.revision,
       contentMarkdown: "plain text",
     })).rejects.toMatchObject({ code: "diagram_update_required" });
 
@@ -253,6 +263,7 @@ describe("MCP template and AI instruction management", () => {
     expect(JSON.stringify(read)).not.toContain("edgeever-table-v1");
     await expect(callMcpTool(context, auth, "update_memo", {
       memoId: created.memo.id,
+      expectedRevision: read.memo.revision,
       contentMarkdown: "plain text",
     })).rejects.toMatchObject({ code: "table_update_required" });
     const stored = sqlite.query("SELECT content_markdown FROM memo_contents WHERE memo_id = ?").get(created.memo.id);
