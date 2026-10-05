@@ -11,15 +11,16 @@
     <a href="https://github.com/tianma-if/edgeever/pkgs/container/edgeever"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fghcr-badge.elias.eu.org%2Fapi%2Ftianma-if%2Fedgeever%2Fedgeever&query=downloadCount&style=social&logo=docker&label=Docker%20Pulls" alt="Docker Pulls" /></a>
     <a href="https://www.producthunt.com/products/edgeever?utm_source=other&utm_medium=social"><img src="https://img.shields.io/badge/Product%20Hunt-ea532a?style=social&logo=product-hunt" alt="Product Hunt" /></a>
     <a href="https://hellogithub.com/repository/tianma-if/edgeever" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=150fee4403f6433880bda91e9576ac06&claim_uid=TWNAjisURpnhL1l&theme=small" alt="Featured｜HelloGitHub" /></a>
-    <a href="https://afdian.com/a/tianma-if"><img src="https://img.shields.io/badge/Afdian-946ce6?style=social&logo=github-sponsors" alt="Sponsor on Afdian" /></a>
+    <a href="#sponsor--support"><img src="https://img.shields.io/badge/Sponsor-EdgeEver-ea4aaa?logo=github-sponsors" alt="Sponsor & Support" /></a>
   </p>
   <p>
     <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-TW.md">繁體中文</a> | <b>English</b> | <a href="README.ja.md">日本語</a>
   </p>
   <p>
-    <a href="https://t.me/+wwUx1BYLrIdiZjY1">💬 Telegram Group</a> &nbsp;|&nbsp;
+    <a href="https://t.me/+wwUx1BYLrIdiZjY1"><img src="assets/readme/community/telegram.svg" alt="Telegram" width="16" height="16" align="absmiddle" /> Telegram Group</a> &nbsp;|&nbsp;
     <a href="https://demo.edgeever.org">🌐 Live Demo</a> &nbsp;|&nbsp;
-    <a href="#client-downloads">📱 Client Downloads</a>
+    <a href="#client-downloads">📱 Client Downloads</a> &nbsp;|&nbsp;
+    <a href="docs/best-practices.md">✨ Showcase & Workflows</a>
   </p>
 </div>
 
@@ -64,6 +65,17 @@ The public demo resets every day at 3:00 AM (China Standard Time) and restores s
 
 > The iOS app requires an Apple ID from outside mainland China.
 
+## ✨ Showcase & Workflows
+
+From multi-channel inspiration capture to deep visual expression and team collaboration, EdgeEver delivers frictionless, end-to-end workflows:
+
+- 💬 **Universal Web & Mobile Clipping**: One-click [WeChat chat history archiving](docs/best-practices.md#1-one-click-wechat-chat-history-archiving) on macOS; browser extension clipping for [Xiaohongshu galleries](docs/best-practices.md#2-one-click-xiaohongshu-red-note-clipping), [X (Twitter) posts & quotes](docs/best-practices.md#3-one-click-x-twitter-post--quote-clipping), [Zhihu Q&As](docs/best-practices.md#4-one-click-zhihu-answer--column-article-clipping), [Reddit discussions](docs/best-practices.md#5-one-click-reddit-discussion-post-clipping), and [GitHub repositories](docs/best-practices.md#8-one-click-github-repository-metadata-clipping); seamless mobile sharing for [photos](docs/best-practices.md#9-one-click-mobile-image-sharing-to-notes) and [WeChat articles](docs/best-practices.md#10-one-click-wechat-article-clipping-on-mobile).
+- 🚀 **Intelligent Visual Notes**: Prompt the AI assistant to generate interactive, editable [mind maps, flowcharts & architecture diagrams](docs/best-practices.md#11-ai-conversational-generation-of-mind-maps-flowcharts--architecture-diagrams), or stylized [timeline infographics](docs/best-practices.md#12-ai-powered-generation-of-professional-infographics) in-place.
+- 📊 **Multi-Dimensional Databases & Forms**: Generate structured [topic banks and HR rosters via AI prompts](docs/best-practices.md#13-instant-multi-dimensional-database-table-generation-via-ai-prompt), and publish [public online collection forms](docs/best-practices.md#14-one-click-public-online-form-collection-from-database-tables) with one click.
+- ✍️ **One-Click Publishing for Creators**: Export notes with [inline CSS into WeChat Official Accounts](docs/best-practices.md#6-one-click-note-copy-to-wechat-official-account--blogs) or generate [elegant long-image posters from AI RSS daily digests](docs/best-practices.md#7-ai-rss-daily-digest--elegant-image-poster-sharing).
+
+👉 Explore all 14 step-by-step showcases with screenshots: **[Complete Showcase & Workflows Guide](docs/best-practices.md)**
+
 ## Features
 
 - **Deploy Your Way**: Run on Cloudflare's free serverless platform or with Docker on a VPS, NAS, or home server. Based on Cloudflare's free storage allowances, a personal deployment can hold roughly 150,000 short notes and 50,000 images; Docker storage scales on demand to easily support millions of notes and a vast image library.
@@ -84,7 +96,7 @@ The public demo resets every day at 3:00 AM (China Standard Time) and restores s
 - **Revision History**: Inspect and restore previous iterations of your notes with built-in version tracking.
 - **Public Note Sharing**: Share a note publicly and stop sharing it at any time. Optionally protect the link with an auto-generated access password.
 - **WeChat Article Clipping**: Share a WeChat Official Account article to EdgeEver on your phone to extract its content and save it as an editable note.
-- **WeChat Chat Archive Import**: On macOS, share chat history from WeChat via "Forward to Other Apps → EdgeEver" to import the entire conversation into a structured note with one click, preserving senders, timelines, quoted replies, and WeChat emojis, with images embedded and videos/files attached automatically.
+- **WeChat Chat Archive Import**: On macOS, share chat history from WeChat via "Forward to Other Apps → EdgeEver" to import the entire conversation into a structured note with one click, preserving senders, timelines, quoted replies, and WeChat emojis, with images embedded and videos/files attached automatically. See the [Best Practices](docs/best-practices.md).
 - **Smart Local Image Compression**: Client-side WebP compression reduces file sizes by 50%-90% before uploading, saving storage and speeding up page loads without extra server costs.
 - **Universal File Attachments**: Attach and preview PDFs, Office documents, zip files, audio, and video directly within notes. Chunked uploads and streaming safely support files up to 1 GiB.
 - **Batch Operations & Flexible Sorting**: Easily merge or relocate multiple notes, with drag-and-drop notebook reordering.
@@ -277,6 +289,13 @@ Docker runs the same frontend, API routes, services, authentication, MCP impleme
 ## Sync Timing
 
 Web, PWA, and desktop upload memo edits after 30 seconds of inactivity and check for remote changes every 5 minutes while visible; focus and manual refresh remain immediate. Adjust `DEFERRED_MEMO_SYNC_DELAY_MS` and `BACKGROUND_WORKSPACE_REFRESH_INTERVAL_MS` in [`apps/web/src/lib/workspace-refresh.ts`](apps/web/src/lib/workspace-refresh.ts).
+
+## Sponsor & Support
+
+EdgeEver is a free and open-source project. Sustaining cross-platform client development, continuous device testing, code signing, and multi-runtime ecosystem maintenance requires ongoing dedication and resources.
+
+- [Support EdgeEver](docs/sponsor.md) — Voluntary donation via WeChat Pay or Alipay
+- [Sponsors & Partners](docs/partners.md) — Support infrastructure, developer tools, services, or community collaboration
 
 ## Acknowledgements
 

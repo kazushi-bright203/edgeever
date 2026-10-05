@@ -11,15 +11,16 @@
     <a href="https://github.com/tianma-if/edgeever/pkgs/container/edgeever"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fghcr-badge.elias.eu.org%2Fapi%2Ftianma-if%2Fedgeever%2Fedgeever&query=downloadCount&style=social&logo=docker&label=Docker%20Pulls" alt="Docker Pulls" /></a>
     <a href="https://www.producthunt.com/products/edgeever?utm_source=other&utm_medium=social"><img src="https://img.shields.io/badge/Product%20Hunt-ea532a?style=social&logo=product-hunt" alt="Product Hunt" /></a>
     <a href="https://hellogithub.com/repository/tianma-if/edgeever" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=150fee4403f6433880bda91e9576ac06&claim_uid=TWNAjisURpnhL1l&theme=small" alt="Featured｜HelloGitHub" /></a>
-    <a href="https://afdian.com/a/tianma-if"><img src="https://img.shields.io/badge/愛發電-946ce6?style=social&logo=github-sponsors" alt="愛發電贊助" /></a>
+    <a href="#贊助與支持"><img src="https://img.shields.io/badge/Sponsor-支持專案-ea4aaa?logo=github-sponsors" alt="贊助與支持" /></a>
   </p>
   <p>
     <a href="README.zh-CN.md">简体中文</a> | <b>繁體中文</b> | <a href="README.md">English</a> | <a href="README.ja.md">日本語</a>
   </p>
   <p>
-    <a href="#wechat-group">💬 微信交流群</a> &nbsp;|&nbsp;
+    <a href="#wechat-group"><img src="assets/readme/community/wechat.svg" alt="WeChat" width="16" height="16" align="absmiddle" /> 微信交流群</a> &nbsp;|&nbsp;
     <a href="https://demo.edgeever.org">🌐 線上展示</a> &nbsp;|&nbsp;
-    <a href="#用戶端下載">📱 用戶端下載</a>
+    <a href="#用戶端下載">📱 用戶端下載</a> &nbsp;|&nbsp;
+    <a href="docs/best-practices.zh-CN.md">✨ 場景與最佳實踐</a>
   </p>
 </div>
 
@@ -64,6 +65,17 @@ EdgeEver 是一款現代化的開源筆記與個人知識庫工作區。它為�
 
 > iOS 用戶端需要使用非中國大陸區 Apple ID 下載。
 
+## ✨ 場景與最佳實踐
+
+從跨渠道內容捕獲到深度知識表達與業務協同，EdgeEver 為個人與團隊提供了高效流暢的端到端工作流：
+
+- 💬 **全渠道剪藏與沉澱**：macOS 端[微信聊天記錄一鍵歸檔](docs/best-practices.zh-CN.md#1-微信聊天记录一键归档与整理)；瀏覽器外掛一鍵剪藏[小紅書畫廊](docs/best-practices.zh-CN.md#2-小红书图文笔记一键剪藏)、[X (Twitter) 推文與引用](docs/best-practices.zh-CN.md#3-x-twitter-推文与引用一键剪藏)、[知乎問答](docs/best-practices.zh-CN.md#4-知乎回答与文章一键精准剪藏)、[Reddit 討論帖](docs/best-practices.zh-CN.md#5-reddit-讨论帖一键剪藏)與 [GitHub 倉庫](docs/best-practices.zh-CN.md#8-github-开源仓库信息一键剪藏)；手機端隨時分享[全網圖片](docs/best-practices.zh-CN.md#9-移动端社媒图片一键转存笔记)與[微信公眾號文章](docs/best-practices.zh-CN.md#10-手机端一键剪藏微信公众号文章)。
+- 🚀 **智慧視覺化表達**：借助伴隨式 AI 助手，自然語言一句話產生可互動的[心智圖、流程圖與架構圖](docs/best-practices.zh-CN.md#11-ai-对话一键生成思维导图流程图与架构图)，或一鍵產生精美的[專業時間線資訊圖](docs/best-practices.zh-CN.md#12-ai-智能生成专业信息图时间线对比图架构图等)。
+- 📊 **多維資料與線上協作**：AI 一句話建構[自媒體選題與人事多維表格](docs/best-practices.zh-CN.md#13-借助右侧-ai-助手一句话生成多维表格)，並一鍵開啟[對外公開的線上收集表單](docs/best-practices.zh-CN.md#14-多维表格一键生成在线公开收集表单)。
+- ✍️ **創作者一鍵發布**：支援[一鍵複製內聯富文本到微信公眾號](docs/best-practices.zh-CN.md#6-一键复制笔记到微信公众号排版)，以及 AI RSS 日報一鍵產生[高質感長圖海報](docs/best-practices.zh-CN.md#7-ai-rss-智能订阅日报与精美长图分享)。
+
+👉 查看全部 14 個實機展示與操作效果：**[完整場景與最佳實踐指南](docs/best-practices.zh-CN.md)**
+
 ## 功能
 
 - **自由選擇部署方式**：既可免費執行於 Cloudflare Serverless，也可透過 Docker 部署到 VPS、NAS 或家用伺服器。按 Cloudflare 免費儲存額度估算，個人部署可容納約 15 萬條短筆記和約 5 萬張圖片；Docker 儲存可按需擴充，輕鬆承載百萬級筆記與海量圖片。
@@ -84,7 +96,7 @@ EdgeEver 是一款現代化的開源筆記與個人知識庫工作區。它為�
 - **筆記歷史版本回溯**：自動記錄修改歷史，隨時查閱與還原過往版本。
 - **公開筆記分享**：支援公開分享筆記，並可隨時取消分享；需要時可為分享連結開啟自動產生的存取密碼。
 - **微信公眾號文章擷取**：在手機上將微信公眾號文章分享至 EdgeEver，即可擷取正文並儲存為可繼續編輯的筆記。
-- **微信聊天記錄匯入**：macOS 端支援在微信中將聊天記錄「轉發到其他應用 → EdgeEver」，一鍵整段匯入為結構化筆記，完整保留發言人、時間軸、引用回覆及微信表情，圖片自動內嵌，影片與檔案自動轉為筆記附件。
+- **微信聊天記錄匯入**：macOS 端支援在微信中將聊天記錄「轉發到其他應用 → EdgeEver」，一鍵整段匯入為結構化筆記，完整保留發言人、時間軸、引用回覆及微信表情，圖片自動內嵌，影片與檔案自動轉為筆記附件。詳見[最佳實踐範例](docs/best-practices.zh-CN.md)。
 - **智慧前端圖片壓縮**：圖片上傳前在瀏覽器端靜默完成壓縮，常見截圖與大圖精簡 50%-90% 體積，載入更迅速、儲存更省心。
 - **通用檔案附件支援**：支援輕鬆上傳並插入 PDF、Office 文件、壓縮檔及影音等各種附件；透過分塊上傳與串流處理，安全支援最大 1 GiB 附件。
 - **高效多選與批次操作**：支援筆記批次合併、批次移動，以及筆記本拖放排序與層級調整。
@@ -182,10 +194,10 @@ curl -fsSL https://edgeever.org/install.sh | bash
 
 歡迎加入 EdgeEver AI 交流群，這裡聚集了大量 Vibe Coding 與 AI 玩家。一起交流 EdgeEver 體驗、AI Agent 實戰落地、高性價比／免費 AI 資源及自動化工作流程。
 
-> 群組 QR Code 7 天內有效。如果 QR Code 過期，請加入微信 `m1245207870`，並備註「EdgeEver 進群」。
+> 目前交流群人數已滿 200 人，無法直接掃碼進群。請掃描下方 QR Code 或加入微信 `m1245207870`，並備註「EdgeEver 進群」，群主將手動邀請您加入。
 
 <p align="center">
-  <img src="assets/wechat-group-qr.jpg" alt="EdgeEver AI 交流群 QR Code" width="260" />
+  <img src="assets/wechat-group-qr.jpg" alt="微信聯絡人 QR Code" width="260" />
 </p>
 
 ## 外掛與主題
@@ -278,6 +290,13 @@ Docker 與 Cloudflare 共用同一套前端、API 路由、業務服務、鑑權
 ## 同步時序
 
 Web、PWA 與桌面版會在停止編輯 30 秒後上傳筆記，並在頁面可見時每 5 分鐘檢查雲端變更；視窗聚焦與手動重新整理仍會立即拉取。可在 [`apps/web/src/lib/workspace-refresh.ts`](apps/web/src/lib/workspace-refresh.ts) 中調整 `DEFERRED_MEMO_SYNC_DELAY_MS` 和 `BACKGROUND_WORKSPACE_REFRESH_INTERVAL_MS`。
+
+## 贊助與支持
+
+EdgeEver 是免費開源專案。保持跨平台用戶端（macOS、Windows、Linux、iOS、Android）的持續演進、真機測試、憑證簽章以及多執行時期生態建設，都需要長期的精力與資源投入。
+
+- [支持 EdgeEver](docs/sponsor.zh-CN.md) —— 透過微信支付或支付寶自願贊助
+- [贊助商與合作夥伴](docs/partners.zh-CN.md) —— 支持基礎設施、開發工具、服務或社群合作
 
 ## 致謝
 

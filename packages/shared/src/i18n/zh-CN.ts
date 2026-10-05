@@ -527,8 +527,10 @@ export const zhCN = {
     editNode: "编辑节点文字",
     deleteSelection: "删除所选内容",
     navHintPan: "拖动画布",
-    navHintHoldShift: "按住",
-    navHintBoxSelect: "框选多选",
+    navHintFocusRelations: "悬停节点或连线查看关系",
+    navHintBoxSelect: "框选",
+    navHintAddChild: "子节点",
+    navHintAddSibling: "同级节点",
     undo: "撤销",
     redo: "重做",
     zoomIn: "放大",
@@ -541,6 +543,9 @@ export const zhCN = {
     fit: "适应画布",
     autoLayout: "自动布局",
     autoLayoutTooltip: "重新规整所有节点与连线",
+    allEdgeLabels: "全部标签",
+    showAllEdgeLabels: "显示所有连线标签",
+    hideDenseEdgeLabels: "只显示当前关系的标签",
     toolbar: "图形工具栏",
     theme: "配色",
     themeGroupVivid: "鲜亮",
@@ -1980,6 +1985,7 @@ export const zhCN = {
     dragHandle: "拖动块",
     noteBodyAria: "笔记正文",
     markdownSourceAria: "Markdown 源码",
+    richTableSourceProtection: "这处表格单元格含有 Markdown 无法完整表示的富文本结构。刚才的修改未应用；请在富文本视图中修改该结构，表格外的源码仍可编辑。",
     loading: "加载中",
     emptySelection: "选择或新建一条笔记",
     saveState: {
@@ -2494,7 +2500,7 @@ export const zhCN = {
     accessLevels: {
       full: {
         label: "完全访问",
-        description: "可读取、创建和修改所有笔记、笔记本、标签及附件，并将笔记移入回收站。",
+        description: "可读取、创建和修改所有笔记、笔记本、标签及附件，将笔记移入回收站，并用已配置的默认模型生成视频笔记总结。",
       },
       "read-only": {
         label: "只读访问",
@@ -2529,6 +2535,7 @@ export const zhCN = {
       "write:resources": "管理附件",
       "read:tags": "读取标签",
       "write:tags": "管理标签",
+      "ai:generate": "生成视频笔记总结",
     },
   },
   advancedPlay: {

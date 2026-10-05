@@ -526,9 +526,11 @@ export const enUS = {
     edgeText: "Connection label",
     editNode: "Edit node text",
     deleteSelection: "Delete selection",
-    navHintPan: "Drag to move canvas",
-    navHintHoldShift: "Hold",
-    navHintBoxSelect: "to box-select",
+    navHintPan: "Drag to pan",
+    navHintFocusRelations: "Hover a node or edge to inspect its relations",
+    navHintBoxSelect: "Box select",
+    navHintAddChild: "Child node",
+    navHintAddSibling: "Sibling node",
     undo: "Undo",
     redo: "Redo",
     zoomIn: "Zoom in",
@@ -541,6 +543,9 @@ export const enUS = {
     fit: "Fit diagram",
     autoLayout: "Auto layout",
     autoLayoutTooltip: "Re-arrange all nodes and connections",
+    allEdgeLabels: "All labels",
+    showAllEdgeLabels: "Show all connection labels",
+    hideDenseEdgeLabels: "Show labels only for the focused relation",
     toolbar: "Diagram toolbar",
     theme: "Color scheme",
     themeGroupVivid: "Bright",
@@ -1980,6 +1985,7 @@ export const enUS = {
     dragHandle: "Drag block",
     noteBodyAria: "Note body",
     markdownSourceAria: "Markdown source",
+    richTableSourceProtection: "This table cell has rich content that Markdown cannot fully represent. The last change was not applied. Edit this structure in rich text view; source outside the cell remains editable.",
     loading: "Loading",
     emptySelection: "Select or create a note",
     saveState: {
@@ -2496,7 +2502,7 @@ export const enUS = {
     accessLevels: {
       full: {
         label: "Full access",
-        description: "Read, create, and edit all notes, notebooks, tags, and attachments, and move notes to trash.",
+        description: "Read, create, and edit all notes, notebooks, tags, and attachments, move notes to trash, and generate video-note summaries with the workspace default model.",
       },
       "read-only": {
         label: "Read-only",
@@ -2531,6 +2537,7 @@ export const enUS = {
       "write:resources": "Manage attachments",
       "read:tags": "Read tags",
       "write:tags": "Manage tags",
+      "ai:generate": "Generate video-note summaries",
     },
   },
   advancedPlay: {
