@@ -1,0 +1,183 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-06T17:25:05.845Z",
+  "applicationBaseline": "9f00a84a9a7288bc7fd01ab31f8f33749f785317",
+  "scope": "Documentation and workspace helper sources only. Personal data and credentials excluded.",
+  "secretScan": {
+    "highConfidencePatterns": 6,
+    "matches": 0,
+    "note": "Pattern scan is supplemented by review; not a proof that arbitrary secrets are impossible."
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 263,
+      "sha256": "b866f7fb04bde750289209341540646280b248c3719acdf7e5eb51cd85c4d2e6"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "bytes": 5500,
+      "sha256": "13122e044cd8cea0d10679b4beeb4c5e2774bc07b63a4155812a9bc59f1ae069"
+    },
+    {
+      "path": "NEXT_AI_PROMPT.txt",
+      "bytes": 3039,
+      "sha256": "12b686e15bf0d36ab1f7a494afcf6598a7d4aef09c1683967880f3250aa33ea7"
+    },
+    {
+      "path": "OPERATIONS.md",
+      "bytes": 9097,
+      "sha256": "2aaece5d6dcd1c591a9315d3fb8de2c5f42837cf75234aa63e775e468a4add49"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4552,
+      "sha256": "1ed2ac6a499a4668fcad7b5d48dc58da8216c91eeb1e99f92d083b81f7cadcd0"
+    },
+    {
+      "path": "STATUS.md",
+      "bytes": 5014,
+      "sha256": "a75ba3c54dd23c5b7925640811d11df44f18c352d033ab818b57612f3ec569f5"
+    },
+    {
+      "path": "USER_PREFERENCES.md",
+      "bytes": 1733,
+      "sha256": "938f0030da2f9d807697d3eb31d6163a4524b80a5b1303e6a6f9f3a2969b3ad5"
+    },
+    {
+      "path": "evidence/handoff-checks.json",
+      "bytes": 1933,
+      "sha256": "1d82f2ca8f76968af1551df5a51c845e6ccd85821d4b6381f7629d9863ef5424"
+    },
+    {
+      "path": "evidence/historical-checks.json",
+      "bytes": 1480,
+      "sha256": "9f3b36dd2207eabe10a86e501d35bda7ea722fe74205fb5558cb15638853548c"
+    },
+    {
+      "path": "workspace/.gitignore",
+      "bytes": 165,
+      "sha256": "3357ea2576a0badff2028cb947a8bd0304ee08bb967f159b7f75bbcd2e04b723"
+    },
+    {
+      "path": "workspace/Git公開準備_2026-10-06.txt",
+      "bytes": 4202,
+      "sha256": "4108cd661a901682516743dc2958c89c6ea1bc1300ce8fea66c7a95fb6e98ae0"
+    },
+    {
+      "path": "workspace/skills/supermemo/SKILL.md",
+      "bytes": 2697,
+      "sha256": "fa9845548d2e1994b205aedb833b218877a94a004e8b4e1a91f640ad565f9808"
+    },
+    {
+      "path": "workspace/skills/supermemo/agents/openai.yaml",
+      "bytes": 267,
+      "sha256": "58fe6c2290e34198f7b6fdbed64721b414eabe37cdfcefcd9f8c10c597191062"
+    },
+    {
+      "path": "workspace/ステップ2_調査・採用案_2026-10-04.txt",
+      "bytes": 25558,
+      "sha256": "1f119d065c0a100c1ea9a6d743be14b8d00bc2a6996e9d1b335f192d3d55c9b9"
+    },
+    {
+      "path": "workspace/バックアップを作成.cmd",
+      "bytes": 138,
+      "sha256": "6791be34538136c3010245ee8c137343a314acf170ef074b12c1bb6ab89ee804"
+    },
+    {
+      "path": "workspace/ローカル試作を起動.cmd",
+      "bytes": 109,
+      "sha256": "a96d539a05d615bbf82643e99cf033a0043b0ca6690c55a6d6f482c4ce07a5a8"
+    },
+    {
+      "path": "workspace/作業引き継ぎ_2026-10-05.txt",
+      "bytes": 13097,
+      "sha256": "8a3b493be96d7648a02b85cb879c6a3376d4a6b7ba3c11f615c2c78f1683e931"
+    },
+    {
+      "path": "workspace/公開準備を確認.cmd",
+      "bytes": 173,
+      "sha256": "078d5d1b9665a89d0c36424ac98040a3f29098777251161d5d65ca1de1fc06a4"
+    },
+    {
+      "path": "workspace/公開用ログイン.cmd",
+      "bytes": 150,
+      "sha256": "28de3bf1d02863ac840ed2f61d29fb32d014e99ab05f11e81b9bdcbe903c87d0"
+    },
+    {
+      "path": "workspace/公開設定_2026-10-06.txt",
+      "bytes": 8199,
+      "sha256": "3cfa93ab772c1fd0dc2e4c9b3da2e640041209185c24b8384ff7296872d1f8be"
+    },
+    {
+      "path": "workspace/就寝中の作業結果_2026-10-06.txt",
+      "bytes": 7615,
+      "sha256": "4c2debb4d1c1dfdc4b9eb0dfde918c5291d85b56dfeb85ada9a71e0b3b0a7452"
+    },
+    {
+      "path": "workspace/新しいAIへ_最初に渡す.txt",
+      "bytes": 3039,
+      "sha256": "12b686e15bf0d36ab1f7a494afcf6598a7d4aef09c1683967880f3250aa33ea7"
+    },
+    {
+      "path": "workspace/本番公開_2026-10-06.txt",
+      "bytes": 1282,
+      "sha256": "de3ed6c8bd7afa8735c1be393f4979d2b4c197193e9200c76b9c1ad76c05659e"
+    },
+    {
+      "path": "workspace/要求仕様書_Ver2_受領原文_2026-10-07.txt",
+      "bytes": 18975,
+      "sha256": "cff10cc7abc57376777bf4541d39842a7da4a030c823780503309c719ea443b2"
+    },
+    {
+      "path": "workspace/要求仕様書_初回受領原文_2026-10-03.txt",
+      "bytes": 23109,
+      "sha256": "b0e4f2af815917ad50ce73d01d721ad388edb222a5e4eac9ee2f3129cb73b557"
+    },
+    {
+      "path": "workspace/起床後の確認・作業引き継ぎ_2026-10-04.txt",
+      "bytes": 11893,
+      "sha256": "8d8ab04e6d538a43791a925e1d62741f73d07f8f46154fc56198664c22fdb9dc"
+    },
+    {
+      "path": "workspace/連携/check-cloud-readiness.mjs",
+      "bytes": 2311,
+      "sha256": "6aa1e1f1e3aae0a25cb3e71c827f9ebf973961f74624ded830233b5f4ec5689c"
+    },
+    {
+      "path": "workspace/連携/prepare-source-checkpoint.mjs",
+      "bytes": 3838,
+      "sha256": "9c7ea95600924ac535301e94f47b429a96416ae681853d2f78065ef3d2fb99a7"
+    },
+    {
+      "path": "workspace/連携/start-supermemo-mcp.mjs",
+      "bytes": 1373,
+      "sha256": "2ba396fb7788f3ef43e55264c0406c27b26ecf5daf628a0f00a5d402aeac05c1"
+    },
+    {
+      "path": "workspace/連携/verify-cloud-account-rehearsal.ts",
+      "bytes": 5087,
+      "sha256": "d1e7a0deeb4c97e2e5875b79194d38e06b04d261727033fe9217c8dd71b4c756"
+    },
+    {
+      "path": "workspace/連携/verify-production-preview.mjs",
+      "bytes": 3912,
+      "sha256": "884389bde334bf3238cc72efc5ab1adddca485ba63a39ff8d646dbb1297ef3e2"
+    },
+    {
+      "path": "workspace/連携/verify-supermemo-mcp.mjs",
+      "bytes": 3623,
+      "sha256": "94e8db6ede02a9985f933c13d42aa9416b6ad55a017cfeae05068a4f1ff521b4"
+    },
+    {
+      "path": "workspace/開発計画書_Ver2反映案_2026-10-07.txt",
+      "bytes": 30567,
+      "sha256": "ccb305dcb1f2a45b68fad170c04c352f66d85b31c940d68cb84ad744e0160cda"
+    },
+    {
+      "path": "workspace/開発計画書_改訂版_2026-10-04.txt",
+      "bytes": 35080,
+      "sha256": "df0882f9d7f9bc5ada679230207bfe0d44dde57fd390626b187219209b53daa2"
+    }
+  ]
+}

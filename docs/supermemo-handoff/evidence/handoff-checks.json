@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-10-06T17:23:52.360Z",
+  "applicationBaseline": "9f00a84a9a7288bc7fd01ab31f8f33749f785317",
+  "scope": "Handoff documents and preserved helper files. Application code unchanged.",
+  "runtime": {
+    "node": "v24.19.0",
+    "bun": "1.3.14",
+    "platform": "Windows"
+  },
+  "checks": [
+    {
+      "command": "bun run typecheck",
+      "exitCode": 0,
+      "result": "passed",
+      "privateLog": ".tools/handoff-typecheck.log",
+      "logSha256": "d66548006c5c7c54f315f252a8864713f539323f6c6187c23bb7db83274361fa"
+    },
+    {
+      "command": "bun run typecheck:mobile",
+      "exitCode": 0,
+      "result": "passed",
+      "privateLog": ".tools/handoff-mobile-typecheck.log",
+      "logSha256": "6d02b34a132e942bae6de2958144849d6d9b7d0183ae2860017857ffb763a9a9"
+    },
+    {
+      "command": "bun run build:web",
+      "exitCode": 0,
+      "result": "passed",
+      "privateLog": ".tools/handoff-web-build.log",
+      "logSha256": "baf44c9a8a8745904b81f0f48b03081f6ead3282def30083f57e7975c21727b3"
+    }
+  ],
+  "buildNotes": "Build succeeded with existing large-chunk/dynamic-import/plugin-timing warnings; these warnings were not repaired by this documentation handoff.",
+  "backup": {
+    "createdAt": "2026-10-06T17:13:42.099Z",
+    "privateDirectory": "backups/2026-10-06T17-13-42-099Z",
+    "memos": 93,
+    "resources": 6,
+    "result": "passed SQLite snapshot/integrity, memo IDs, object byte lengths, SHA256 and JSON export"
+  },
+  "documentChecks": {
+    "requirementsOriginal": "byte identical",
+    "relativeLinks": "passed",
+    "manifest": "SHA256 verified",
+    "credentials": "no high-confidence pattern matches; reviewed curated inputs"
+  },
+  "notPerformed": [
+    "New feature implementation",
+    "Production data migration",
+    "Authenticated production login",
+    "Real iPhone/voice acceptance",
+    "ChatGPT OAuth integration",
+    "Rerun of browser E2E or 142 historical tests"
+  ]
+}

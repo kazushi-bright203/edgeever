@@ -1,0 +1,64 @@
+Git公開準備・最新引き継ぎ
+基準日：2026年10月6日（日本時間）
+
+今回の結果
+ユーザーの指示「寝るから承認が発生するまで全部進めて」に沿って実施。
+GitHubブラウザーの実ログインは kazushi-bright203。Connectorの triangle-to-square とは別である。
+Fork作成済み：https://github.com/kazushi-bright203/edgeever
+Repository Actions variable EDGE_EVER_PRESERVE_FORK_CHANGES=true を保存し、画面で確認済み。
+origin は上記Fork、upstream は https://github.com/tianma-if/edgeever.git。
+ローカルmainにupstreamの更新55件を競合なく統合。
+統合コミット：9f161446f3d74e5d7c66bf8d7c816de5e2e7cf02
+修正コミット：9f00a84a9a7288bc7fd01ab31f8f33749f785317
+未コミット変更なし。プッシュは未実施。
+
+修正内容・検証
+Companionのメモ更新に、事前に全文を読んだ時点のrevisionを渡す。
+明示された古いrevisionを最新revisionに置き換えず、競合として拒否する。
+未整理タグの仕様に検査を合わせ、直接MCP更新のrevision必須検査を追加。
+関連Bun検査142件合格、ChromeのPC・狭幅画面検査14件合格。
+Web/API型検査、mobile型検査、Web本番ビルド、Git差分検査は合格。
+狭幅検査はPCのChromeでの検査であり、実スマホ・実音声は未検証。
+
+復元用の控え
+Git全履歴bundle：.tools/supermemo-main-20261006.bundle
+bundle verify合格。mainの全履歴を含む。
+最新データバックアップ：backups/2026-10-05T19-41-31-494Z
+93メモ、6画像。SQLite integrity、canonical IDs、画像SHA256等の検査合格。
+バックアップと認証情報はGitHubへ送信しない。
+
+承認待ち
+Git Credential ManagerのGitHub新規OAuth権限の承認ボタン前で停止。
+アカウント：kazushi-bright203
+要求権限：公開・非公開Repositories、Gist read/write、Actions workflow更新。
+Git push自体はユーザーから許可済み。この新規の持続的なアクセス許可は別途確認が必要。
+承認画面：https://github.com/login/device/confirmation
+デバイスコードは短時間で失効するため、再開時に必要なら新しいコードでやり直す。
+承認後は通常のorigin main pushを行い、remote SHA一致で検証。force push不要。
+
+Cloudflare
+Workers Free、空D1 edgeever作成済み。R2は契約有効化が未実施。
+メモ・画像の本番移行、Worker公開、有料プラン切替は未実施。
+R2契約・支払いの操作は無断で進めない。
+
+追記：2026年10月6日 05:30頃 JST
+ユーザーのOKにより、提示済みのGCM OAuth権限付与を承認済み。
+期限切れのデバイスコードを再発行し、同じアカウント・同じ要求権限でAuthorizeを操作。
+GitHubが追加のsudo本人確認（Verify via email）を要求した。
+本人確認メール送信は自動承認レビューで拒否：OAuth承認とは別に、メール送信そのものの明示的許可がないという理由。
+メールは未送信。OAuth認証未完了。プッシュ未実施。
+次は本人確認メール送信の許可と、GitHub本人確認の完了が必要。
+プッシュ準備済みmainのSHAは9f00a84a9a7288bc7fd01ab31f8f33749f785317のまま。
+
+最新追記：GitHub認証・プッシュ完了
+ユーザーから本人確認メール送信を明示的に許可され、GitHub本人確認を完了。
+Git Credential Manager認証コマンドはexit 0。
+通常のgit push --set-upstream origin mainは成功。
+GitHubとローカルmainのSHA一致をgit ls-remoteで確認：
+9f00a84a9a7288bc7fd01ab31f8f33749f785317
+作業ツリーはクリーン。GitHub上のコミット表示も確認。
+送信先：https://github.com/kazushi-bright203/edgeever
+個人メモ、画像、バックアップ、認証情報は送信していない。
+上記の「承認待ち」「メール未送信」「プッシュ未実施」は過去段階の記録。
+残る公開前提はR2契約有効化・支払い設定、本番認証設定、Worker作成と検証、データ移行。
+R2契約・有料切替・本番公開は未実施。

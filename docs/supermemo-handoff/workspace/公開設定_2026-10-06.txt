@@ -1,0 +1,84 @@
+最新状況：R2有効化と保存先作成を確認済み（2026年10月6日）
+ユーザー画像でR2 Overview・バケット作成可能を確認。
+Wranglerの読取でR2 subscription_requiredが解消していることを確認。
+空のR2 bucket edgeever-resourcesをStandardで作成し、bucket listで存在を確認。
+D1 edgeeverは既存の空DB。アプリWorker、認証Secret、データ移行は未実施。
+GitHub Fork kazushi-bright203/edgeeverへmainをpush済み。
+Codex内ブラウザーのCloudflareは未ログイン。ユーザーへログインを依頼済み。
+次はCloudflare GitHub連携、新規権限の確認、Worker作成、runtime認証Secret、サービス検証。
+R2のバケット直接公開は有効化していない。個人メモ・画像の本番送信も未実施。
+以下は過去段階の記録。
+最新状況：2026年10月6日（日本時間）
+ご主人様のスクリーンショットでWorkers Freeがアクティブ、支払い方法未登録を確認。既にいただいた「OK」の承認に基づきD1 edgeeverを1個作成した。
+作成成功：APAC、UUID 54a44f8a-2761-4284-af2e-2f01843a656c。
+Wrangler d1 list --jsonでedgeeverだけの1件、num_tables=0、file_size=8192を確認した。
+本番へのメモ移行・テーブル作成・Worker公開・有料プラン切替は実施していない。tracked wrangler.tomlも変更していない。
+前回の自動承認レビュー拒否は、具体的承認と無料プラン確認後の再試行で解消した。
+次の未完了項目：R2の有効化（契約・支払い方法の画面確認が必要）、GitHub Fork連携、認証設定、本番デプロイ。
+
+以下は準備時点の経緯。
+スーパーメモ 公開設定の準備
+2026年10月6日（日本時間）
+
+確定した状態
+Cloudflareの通常ダッシュボードへログインでき、WranglerのDevice Authorizationも成功。PC側whoamiで認証済みを確認した。公開先のアカウントはご主人様のCloudflareアカウント。CLIのD1一覧は空。
+
+次の具体的操作
+本文用D1データベースを1個、名前edgeeverで作成する。既存のDBは変更しない。今回は空の保存先作成だけで、本番公開・データ移行・有料プラン切替を含まない。
+作成は自動承認レビューに拒否されて実行されなかった。理由は、永続的な外部リソース作成への具体的承認と予算上限が確認できないこと。承認後に再試行する。D1作成済みと扱わない。
+
+画像用R2
+CLIのbucket listは「Please enable R2 through the Cloudflare Dashboard」code10042で停止。R2契約は未有効。
+ダッシュボードでStorage & databases → R2 → Overviewを開き、契約画面を確認する必要がある。カード登録・契約条件の確認はご主人様の操作を要する。
+Standardの無料枠は月10GB-month、Class A月100万回、Class B月1000万回。超過は従量課金。無料枠が自動的な金額上限になるとは説明しない。未提示の有料契約や課金許可として以前の「全部やって」を使わない。
+今回の有効化・契約・バケット作成は未実施。個人用メモと画像は本番へ送っていない。
+
+公開後の運用案
+Worker edgeever、D1 edgeever、R2 edgeever-resourcesを使用する。画像は認証付きAPIで取得し、R2バケットの直接公開を有効にしない。API認証と初期管理者Secretを設定する。AI追加課金は予算・モデル指定まで行わない。
+標準手順のGitHub Fork連携も未設定。ローカルのremoteは上流tianma-if/edgeever。上流へカスタム変更をpushしない。
+
+根拠
+https://developers.cloudflare.com/d1/platform/pricing/
+https://developers.cloudflare.com/r2/pricing/
+https://developers.cloudflare.com/r2/get-started/
+research/edgeever/docs/agent-deploy-cloudflare.md
+
+2026年10月6日 追加確認
+ご主人様はD1 edgeeverを1個、Workers Free確認後・無料枠で作成する提案に「OK」と承認した。承認の再要求は不要。
+契約一覧APIは現在のWrangler OAuth権限でAuthentication error code10000。Workers account-settingsはdefault_usage_model=standard、workers/standardはstandard=trueを返したが、これらは無料/有料の契約判定として使わない。
+ブラウザー読み取りはCUA環境のapply deny-read ACLsエラーで起動不可。Workers Freeの実契約確認ができていないため、D1作成はまだ再実行していない。必要なのは追加の作成承認ではなく、Workersプラン表示の確認。
+
+
+
+最新追記：Codex内ブラウザーでCloudflare account 5c474db622324e9c0cce5c6fb8257e44へのログイン確認。Create app→Connect GitHub→Select a repositoryまで進んだ。Connect GitHub accountは自動承認レビューで拒否（新規連携の開始に対する明示承認がない、要求権限と対象範囲未確認）。GitHub App連携は未完了。ユーザーへ接続開始許可を求め、許可後は権限画面を確認して対象をkazushi-bright203/edgeeverに限定できるか確認する。Worker未作成。
+
+最新追記：GitHub連携確認・Worker作成前
+Cloudflareの接続済みGitHubアカウントkazushi-bright203、リポジトリedgeeverを画面で確認。
+Worker作成フォーム：edgeever、ルート/、deploy npx wrangler deploy。任意build commandは空欄（標準entrypointで実行）。
+API token自動作成名edgeever-buildsを入力したが、デプロイは未押下。
+自動作成API tokenはaccount設定read、Workers Scripts/KV/R2/D1/Vectorize/Queues/Basin Pipelines/Containers/Cloudchamber/AI Search edit、Connectivity Directory read/bind、全zone Workers routes edit、user詳細/membership read。
+新規持続的な権限であり、具体的な承認待ち。まだWorkerもトークンも作成されていない。
+
+最新追記：Worker作成・初回ビルド開始（2026年10月6日06:02 JST）
+ユーザーOKでedgeever-builds自動APIトークンを許可し、デプロイを押下。
+CloudflareにedgeeverプロダクションWorkerを作成。GitHub kazushi-bright203/edgeever/main接続済み。
+初回build ID：1649627d-879b-4d13-8113-a45e10c91fae。依存インストールまで進行を確認。成功は未確認。
+Settingsのproduction runtime変数追加画面を開き、キーEDGE_EVER_AUTH_PASSWORD、Secretチェックを準備。
+値は空欄。管理者パスワードの入力・保存はユーザーに引き継ぐ。
+Builds変数にはパスワードを追加しない。プレビュー環境にも追加しない。
+Worker Secret保存後、初回Buildが失敗していれば再試行して確認する。
+まだサービス動作・ログイン・未認証アクセス拒否の本番検証、メモ移行は未実施。
+
+最新状況：本番デプロイ成功（2026年10月6日06:13 JST）
+URL：https://edgeever.kazushi-5c4.workers.dev/memo
+Worker Version：04c19b49-2bfa-4ebf-93ae-5efaad5d894a
+Cloudflare Build：c009f600（06:13:09にSuccess Build completedを確認）。
+初回はlightningcssの依存tarball取得/展開失敗。同じ設定の再試行で解消。コード変更なし。
+ユーザーがruntime Secret EDGE_EVER_AUTH_PASSWORDを入力保存済み（値は取得していない）。
+D1は0064まで適用。20 required tables、runtime Secret存在、Worker healthがCloudflareの検証でも合格。
+独立HTTP検証：health200 ok/authMode required/D1/R2、openapi200 ok。
+匿名の/api/v1/memos、tags、search、resources/test/blobは401。
+POST /mcp tools/listも正規Acceptヘッダーで401。
+本番ログイン画面を開き、ユーザー名adminを入力。ログインは未完了。
+次：ユーザーが保存したパスワードでログイン→認証済み動作検証→移行パケットの仕上げ・メモ/画像/タグ/履歴/ゴミ箱の移行検証→MCPの本番接続切替→スマホ実機・音声検証。
+ローカルの93メモ・6画像はまだ本番へ移行していない。本番とローカルはこの時点では別データ。

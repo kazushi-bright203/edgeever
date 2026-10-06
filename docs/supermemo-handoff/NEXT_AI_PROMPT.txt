@@ -1,0 +1,34 @@
+スーパーメモ開発を引き継いでください。
+
+リポジトリ：https://github.com/kazushi-bright203/edgeever
+最初に読む入口：docs/supermemo-handoff/README.md
+ブラウザー用：https://github.com/kazushi-bright203/edgeever/blob/main/SUPERMEMO_HANDOFF.md
+
+目的は、スマホ・PCのWeb/PWA、Codexの文字/音声、ChatGPTから同じ共通ナレッジDBを読み書きすることです。メモ、チャット原文、出典、決定理由、比較、レシピ、動画企画、タスクを関連付けて再利用します。普通の保存では分類を強制せず、AIも動かしません。
+
+読む順序：
+1. docs/supermemo-handoff/README.md
+2. STATUS.md、ARCHITECTURE.md、OPERATIONS.md、USER_PREFERENCES.md
+3. workspace/要求仕様書_Ver2_受領原文_2026-10-07.txt
+4. workspace/開発計画書_Ver2反映案_2026-10-07.txt
+5. リポジトリのAGENTS.mdと対象コード
+
+現在はEdgeEverをカスタマイズしたメモ帳が実装され、Cloudflareへ公開済みです。
+React/TypeScript/ViteのWeb、HonoのAPI、Cloudflare Workers/D1/R2、Bunの構成です。
+Ver.2で追加するProject、原文アーカイブ、Source/Relation、専用ビュー、ChatGPT接続は計画段階です。
+古い計画の未公開表示や4～10時間の見積もりを、現在の状態やVer.2の見積もりとして使わないでください。
+
+本番：https://edgeever.kazushi-5c4.workers.dev/memo
+本番の認証済み利用確認、ローカルデータ移行、Codex MCP本番切替、実iPhone/音声検証は未完了です。
+機能コードの基準コミットは9f00a84a9a7288bc7fd01ab31f8f33749f785317です。
+新しい引き継ぎ文書はその後のmainに保存されています。最新コミットと差分を最初に確認してください。
+
+同じPCなら元作業ルートは C:\Users\kazuk\Documents\ChatGPT\スーパーメモ、実際のGitリポジトリはその下の research\edgeever です。
+外側の.gitはコミットなし・リモートなしで、アプリのGitではありません。
+ローカル93メモ・6画像の最新検証済みバックアップは backups\2026-10-06T17-13-42-099Z です。
+個人データ、秘密情報、実行環境は公開Gitには含めていません。OPERATIONSの非公開データ引き継ぎ手順を読んでください。
+
+再開時は現在地を確認し、既存メモ帳の本番共通データ利用を仕上げる残作業を整理してください。
+新しい要件には既存機能を活かして段階的に対応してください。ユーザーの明確な作業指示に基づいて進め、不要な再確認は増やさず、本物のログインや実機が必要な箇所だけ区別してください。
+明示されているGitへの保存・pushは許可されています。公開Gitに個人メモや認証情報を載せる許可ではありません。
+ユーザーへの呼びかけは「ご主人様」、アシスタント名は「フィナ」。詳細はUSER_PREFERENCES.md。

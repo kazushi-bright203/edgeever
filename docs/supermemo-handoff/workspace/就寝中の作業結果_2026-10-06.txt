@@ -1,0 +1,78 @@
+最新：GitHub認証とmainのプッシュ完了。SHA 9f00a84。詳細は Git公開準備_2026-10-06.txt の最新追記を参照。R2契約と本番公開は未実施。
+
+最新の結果は Git公開準備_2026-10-06.txt を参照。Forkは kazushi-bright203/edgeever に作成済み。プッシュは新規OAuth権限の承認待ち。以下は前段階の記録です。
+
+スーパーメモ：就寝中の独立作業の結果
+基準日：2026年10月6日（日本時間）
+
+最新状態
+ご主人様の指示は「寝るから確認・承認がいらない作業を全部極力すすめて」。追加の人手・契約が不要な検証と準備を実施した。
+Workers Freeアクティブをユーザー画像で確認し、承認済みD1 edgeeverを1個作成済み。
+D1 UUID：54a44f8a-2761-4284-af2e-2f01843a656c。APAC。今回の読取ではテーブル0、12,288バイト。
+本番へのメモ・画像移行、Worker公開、有料プラン切替は未実施。
+
+Codexの現在の会話からの実接続
+supermemoのMCPツールがこのチャットに読み込まれていることを確認。
+get_current_userでローカルowner / ws_defaultへの接続を確認。
+検査用メモ1個をcreate_memoで作成、同じrequestKeyで再送して同じIDを確認。
+get_memoで版を読み、update_memoで版指定更新。古い版の更新は拒否。
+get_memoの再読込で同じID・本文・版1を確認。
+バックアップの正本コピーにも同じID・本文・版があることを照合した。
+検査用ID：memo_03463e70a58c4edb89e6e0563233e65f。最後にこの1件だけをtrash_memosでゴミ箱へ移し、isDeletedを再確認。
+既存メモは編集していない。MCPのstdio検査だけでなく、実際のチャットから文字操作が成功した。
+スマホ実機と実音声は未検証。クラウドへのMCP接続切替もまだ行っていない。
+
+最新バックアップ
+backups/2026-10-05T18-44-19-442Z：77メモ、画像4件。ゴミ箱の検査用メモも含む。
+SQLiteのWALを含むスナップショット、DB整合性、全IDの本文読込、画像サイズとSHA256、JSON書出しが合格。
+バックアップDBには認証情報も含まれる。私的保存に留め、GitHubや公開サイトへ送らない。
+ChromeのIndexedDB内に残る未送信下書きはこのサーバーバックアップに含まれない。
+
+本番向けアカウント切替の別コピー検証
+連携/verify-cloud-account-rehearsal.ts を作成して実行。
+backups/account-rehearsal-2026-10-05T18-47-04-201Z のコピーだけで、ローカルのusers/members/sessions/api_tokens/login_attemptsを除去。
+メモ本体、履歴、タグ、画像参照は維持。使い捨ての非公開パスワードで管理者bootstrapを検証。
+認証必須、誤パスワード拒否、新管理者がws_defaultのownerになることを確認。
+全77メモのID・本文・Markdown・版・タグ・ゴミ箱状態が一致。画像4件の参照とSHA256も一致。
+ローカルセッション/APIトークン0、外部キーとDB整合性が合格。
+このコピーには私的メモや他の私的設定が残り得る。クラウド移行パッケージではない。アップロード・正本置換は禁止。
+本番のD1/R2への投入、Cloudflare上でのログイン・復元は未検証。
+既存のJSON復元ではis_deletedを0へ戻す実装があるため、ゴミ箱保持を確認せずに本番移行に採用しない。空タグのID保持、履歴、画像参照も移行方式ごとに検証する。
+
+ソース復元用控え
+連携/prepare-source-checkpoint.mjs を作成。既存HEAD 6180a68a745dd938fe64c77f6e4a23668c84cb83 と main を記録。
+.tools/checkpoints の日時フォルダーへGit binary diff、追加ソース23ファイル、連携スクリプト・スキルソース・作業資料を保存する。
+manifest.jsonにSHA256と基準commit、RESTORE.txtに別チェックアウトでの復元手順を記録。
+最初の控えについてgit apply --reverse --checkが合格し、追加23ファイルのハッシュが一致した。
+秘密・バックアップのメモデータ・node_modules・.wrangler・グローバルCodex設定はソース控えに含めない。
+コミット、ブランチ追加、上流へのpush、GitHub Fork作成はしていない。
+
+公開準備の読取診断
+連携/check-cloud-readiness.mjs と 公開準備を確認.cmd を追加。
+認証・対象アカウント・D1一覧・R2バケット一覧を読み取るだけで、作成・契約・公開は実行しない。
+.tools/cloud-readiness.json に秘密を含まない結果を保存。
+実行結果：authenticated=true、edgeeverのD1あり、R2=subscription_required、deploymentReady=false。
+R2未有効でcode10042。現段階で契約・カード登録・有料プランへ進めていない。
+ソースのgit diff --check合格。新しい補助スクリプトは実行結果で検証。今回アプリ本体のコードは変更していないため、既に合格している56関連テスト・14Chrome検査・必須型検査とビルドは繰り返していない。
+最後に通常Web 127.0.0.1:5173/memo=200、API 127.0.0.1:8787/api/health ok=trueを確認。開発サーバーを継続。
+
+起床後に必要な操作
+1. CloudflareのStorage & databases → R2 → Overviewで契約画面の条件を確認。月の無料枠は費用上限ではない。未提示のカード登録・従量課金承認を推測しない。
+2. GitHubのご主人様のアカウントでFork連携。標準手順docs/agent-deploy-cloudflare.mdに従う。既存上流remoteへpushしない。カスタムForkのEDGE_EVER_PRESERVE_FORK_CHANGES=trueを設定して変更の上書きを防ぐ。
+3. runtime Secretによる初期管理者認証、R2 private binding、追加migration、本番移行前の最新バックアップと移行照合を経てWorker公開。
+4. 公開後の匿名401、同じID/本文/版、画像ハッシュ、MCP往復、実iPhone・実音声を検証。
+5. AIプロバイダー・モデル・金額予算は未指定。実課金を伴う呼び出しは未実施。月300回という試行数は円の上限ではない。
+
+スキル：C:/Users/kazuk/.codex/skills/supermemo/SKILL.md を使用。
+
+2026年10月6日 Git送信の指示
+ご主人様が「GITは勝手にプッシュして」と明示。以後プッシュについての再承認は不要。
+GitHub Connectorの本人：triangle-to-square、ID45443227。
+現時点でConnectorから見えるのは他プロジェクトのprivate repo1件のみ。本人のedgeever保存先は見つからない。PCのGit Credential Managerのログイン済み一覧も空。
+アプリソース44ファイルをmainへローカルコミット：347426fbb6ba27d16cc33fe1b6a8f6f1d2823882。
+GitHubの非公開メール形式でコミット。メモ、画像、DB、トークン、バックアップはコミットに含めていない。
+remote originは依然tianma-if/edgeever。本人のFork作成・認証が必要。上流へpushしない。
+公式Git Credential Manager Device Flowを開始した。認証完了とプッシュの成功は別途確認する。現段階でpush済みと扱わない。
+Git Credential ManagerのDevice Flowは認証コードの取得段階で応答せず、この作業で起動した該当補助プロセスだけを停止した。認証は完了していない。GitHub Fork作成画面をCodexブラウザーで開いた。本人のForkとそのGitHub連携へのアクセス設定待ち。
+
+

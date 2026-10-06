@@ -1,0 +1,40 @@
+{
+  "description": "Historical local logs from 2026-10-06; not reruns of Ver.2 features. Raw logs are retained privately on the original PC.",
+  "files": [
+    {
+      "path": ".tools/merged-tests.log",
+      "bytes": 16515,
+      "sha256": "8cf27618e020783033d15eb8cc611ab85f3b0d4806c6bd757f1bf590c5f0f4f7",
+      "modifiedAt": "2026-10-05T19:35:04.523Z",
+      "summary": "142 pass; 0 fail; 810 assertions; 12 files"
+    },
+    {
+      "path": ".tools/merged-browser.log",
+      "bytes": 2377,
+      "sha256": "a889cbdf0fde29d9b9537ed7b9affe3573704c9e2af7254d0ed04c64591f9f6d",
+      "modifiedAt": "2026-10-05T19:38:43.885Z",
+      "summary": "14 passed; PC and narrow Chrome, not iPhone"
+    },
+    {
+      "path": ".tools/merged-typecheck.log",
+      "bytes": 33,
+      "sha256": "d66548006c5c7c54f315f252a8864713f539323f6c6187c23bb7db83274361fa",
+      "modifiedAt": "2026-10-05T19:35:43.187Z",
+      "summary": "typecheck historical run"
+    },
+    {
+      "path": ".tools/merged-mobile-typecheck.log",
+      "bytes": 72,
+      "sha256": "6d02b34a132e942bae6de2958144849d6d9b7d0183ae2860017857ffb763a9a9",
+      "modifiedAt": "2026-10-05T19:30:12.471Z",
+      "summary": "typecheck:mobile historical run"
+    },
+    {
+      "path": ".tools/merged-web-build.log",
+      "bytes": 115464,
+      "sha256": "dce636b487fa333e5b413c24a290695d2643b608e4cf0c73cb44631699744152",
+      "modifiedAt": "2026-10-05T19:38:00.354Z",
+      "summary": "build:web historical run"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+# Preserve received documents and manifest hashes across operating systems.
+* -text
+# Received/historical snapshots keep original CRLF and trailing blank lines.
+# Formatting checks still apply to newly authored guides outside workspace/.
+workspace/** -whitespace

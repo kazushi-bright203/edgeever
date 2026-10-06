@@ -1,0 +1,14 @@
+
+最新状況：本番デプロイ成功（2026年10月6日06:13 JST）
+URL：https://edgeever.kazushi-5c4.workers.dev/memo
+Worker Version：04c19b49-2bfa-4ebf-93ae-5efaad5d894a
+Cloudflare Build：c009f600（06:13:09にSuccess Build completedを確認）。
+初回はlightningcssの依存tarball取得/展開失敗。同じ設定の再試行で解消。コード変更なし。
+ユーザーがruntime Secret EDGE_EVER_AUTH_PASSWORDを入力保存済み（値は取得していない）。
+D1は0064まで適用。20 required tables、runtime Secret存在、Worker healthがCloudflareの検証でも合格。
+独立HTTP検証：health200 ok/authMode required/D1/R2、openapi200 ok。
+匿名の/api/v1/memos、tags、search、resources/test/blobは401。
+POST /mcp tools/listも正規Acceptヘッダーで401。
+本番ログイン画面を開き、ユーザー名adminを入力。ログインは未完了。
+次：ユーザーが保存したパスワードでログイン→認証済み動作検証→移行パケットの仕上げ・メモ/画像/タグ/履歴/ゴミ箱の移行検証→MCPの本番接続切替→スマホ実機・音声検証。
+ローカルの93メモ・6画像はまだ本番へ移行していない。本番とローカルはこの時点では別データ。

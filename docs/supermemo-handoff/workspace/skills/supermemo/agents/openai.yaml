@@ -1,0 +1,4 @@
+interface:
+  display_name: "スーパーメモ"
+  short_description: "スマホ・PCと同じメモを、Codexの文字・音声会話で検索・保存・編集する"
+  default_prompt: "$supermemo を使って、授業のメモを探して開いてください。"
